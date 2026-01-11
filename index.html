@@ -190,37 +190,61 @@
 
     // --- MERCADO PAGO ---
     window.gerarPix = async () => {
-        document.getElementById('btn-generate-pix').style.display = 'none';
-        document.getElementById('pix-loading').style.display = 'block';
+    const btn = document.getElementById('btn-generate-pix');
+    const loading = document.getElementById('pix-loading');
+    
+    btn.style.display = 'none';
+    loading.style.display = 'block';
 
-        const paymentData = {
-            transaction_amount: 29.90,
-            description: `Upgrade PRO - ${currentUser.email}`,
-            payment_method_id: "pix",
-            payer: { email: currentUser.email }
-        };
-
-        try {
-            const res = await fetch("https://api.mercadopago.com/v1/payments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MP_ACCESS_TOKEN}` },
-                body: JSON.stringify(paymentData)
-            });
-            const data = await res.json();
-            
-            if (data.point_of_interaction) {
-                const pixCode = data.point_of_interaction.transaction_data.qr_code;
-                const pixImg = data.point_of_interaction.transaction_data.qr_code_base64;
-
-                document.getElementById('pix-loading').style.display = 'none';
-                document.getElementById('pix-container').style.display = 'block';
-                document.getElementById('qrcode-img').innerHTML = `<img src="data:image/jpeg;base64,${pixImg}" style="width:180px; margin:10px auto; display:block;">`;
-                document.getElementById('pix-copy-code').setAttribute('data-code', pixCode);
-                
-                checkStatus(data.id);
-            } else { alert("Erro na API do Mercado Pago."); }
-        } catch (e) { alert("Erro de conexão."); }
+    const paymentData = {
+        transaction_amount: 29.90,
+        description: `Upgrade PRO - ${currentUser.email}`,
+        payment_method_id: "pix",
+        payer: {
+            email: currentUser.email,
+            first_name: "Usuario",
+            last_name: "Efootball"
+        }
     };
+
+    try {
+        const res = await fetch("https://api.mercadopago.com/v1/payments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
+                "X-Idempotency-Key": "key_" + Date.now() // Necessário para evitar duplicidade
+            },
+            body: JSON.stringify(paymentData)
+        });
+
+        const data = await res.json();
+        console.log("Resposta do Mercado Pago:", data); // Verifique o erro real no F12 console
+
+        if (data.point_of_interaction) {
+            const pixCode = data.point_of_interaction.transaction_data.qr_code;
+            const pixImg = data.point_of_interaction.transaction_data.qr_code_base64;
+
+            loading.style.display = 'none';
+            document.getElementById('pix-container').style.display = 'block';
+            document.getElementById('qrcode-img').innerHTML = `<img src="data:image/jpeg;base64,${pixImg}" style="width:180px; margin:10px auto; display:block;">`;
+            document.getElementById('pix-copy-code').setAttribute('data-code', pixCode);
+            
+            checkStatus(data.id);
+        } else {
+            // Se cair aqui, o Mercado Pago respondeu, mas com erro (Ex: Token inválido)
+            loading.style.display = 'none';
+            btn.style.display = 'block';
+            alert("Erro na API: " + (data.message || "Verifique seu Access Token"));
+        }
+    } catch (e) {
+        // Se cair aqui, é erro de conexão ou CORS (bloqueio do navegador)
+        console.error("Erro de conexão/CORS:", e);
+        loading.style.display = 'none';
+        btn.style.display = 'block';
+        alert("Erro de conexão: O navegador bloqueou a requisição. Tente usar um navegador sem extensões de bloqueio.");
+    }
+};
 
     window.copyPix = () => {
         const code = document.getElementById('pix-copy-code').getAttribute('data-code');
