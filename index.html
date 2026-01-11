@@ -204,28 +204,19 @@
 
     // --- PAGAMENTO (CORRIGIDO) ---
     window.confirmarPagamento = async () => {
-        const btn = document.getElementById('btn-confirm-pay');
-        if(confirm("Confirma o pagamento PIX? Seu plano PRO será ativado agora.")) {
-            btn.disabled = true;
-            btn.innerText = "ATIVANDO... AGUARDE";
-            try {
-                // Salva no banco e espera a resposta do servidor
-                await setDoc(doc(db, "usuarios", currentUser.uid), { 
-                    plan: "pro", 
-                    email: currentUser.email,
-                    updatedAt: new Date()
-                }, { merge: true });
-                
-                alert("CONTA PRO ATIVADA COM SUCESSO!");
-                // Recarrega apenas após ter certeza que salvou
-                window.location.reload(); 
-            } catch (e) {
-                alert("Erro ao ativar. Verifique sua internet.");
-                btn.disabled = false;
-                btn.innerText = "JÁ PAGUEI / ATIVAR PRO";
-            }
-        }
-    };
+    if(!currentUser) return alert("Logue primeiro!");
+    try {
+        // Gravando na coleção 'usuarios' onde o ID do doc é o seu UID
+        await setDoc(doc(db, "usuarios", currentUser.uid), { 
+            plan: "pro", 
+            email: currentUser.email 
+        });
+        alert("PLANO ATIVADO!");
+        location.reload();
+    } catch (e) {
+        alert("Erro de permissão: " + e.message);
+    }
+};
 
     window.copyManualPix = () => {
         navigator.clipboard.writeText(document.getElementById('pix-manual-code').innerText.trim());
