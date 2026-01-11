@@ -28,8 +28,10 @@
         td { padding: 12px 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
         .results-scroll-container { display: flex; overflow-x: auto; gap: 15px; padding: 5px 5px 15px; scrollbar-width: none; }
-        .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; }
-        .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; position: relative; }
+        .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .btn-share { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px; }
         
         .match-item { display: flex; align-items: center; justify-content: space-between; background: #000; margin-bottom: 6px; padding: 8px 12px; border-radius: 6px; border: 1px solid #1a1f26; }
         .match-item .p-score { background: var(--primary); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 4px; min-width: 45px; text-align: center; cursor: pointer; }
@@ -99,12 +101,9 @@
 <div id="upgrade-modal" class="modal">
     <div class="modal-content" style="text-align: left;">
         <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
-        <p style="font-size: 11px; color:#aaa;">Libere jogadores ilimitados e jogos de ida e volta.</p>
-
         <div id="pay-area" style="text-align: center; margin-top: 20px;">
             <div id="pix-loading" style="display:none; color: var(--primary);">Gerando QR Code Pix...</div>
             <button id="btn-generate-pix" class="btn-adm" style="background: var(--primary); color: #000;" onclick="gerarPix()">PAGAR R$ 29,90 VIA PIX</button>
-            
             <div id="pix-container" style="display:none;">
                 <div id="qrcode-img"></div>
                 <div id="pix-status">Aguardando Pagamento...</div>
@@ -156,13 +155,11 @@
     let allMatches = [];
     let currentMatchId = null;
 
-    // --- AUTENTICAÇÃO ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
             const userRef = doc(db, "usuarios", user.uid);
             const userSnap = await getDoc(userRef);
-            
             if (userSnap.exists() && userSnap.data().plan === "pro") {
                 isPro = true;
                 document.getElementById('limit-info').innerText = "PLANO PROFISSIONAL ⚡";
@@ -190,66 +187,41 @@
 
     // --- MERCADO PAGO ---
     window.gerarPix = async () => {
-    const btn = document.getElementById('btn-generate-pix');
-    const loading = document.getElementById('pix-loading');
-    
-    btn.style.display = 'none';
-    loading.style.display = 'block';
+        const btn = document.getElementById('btn-generate-pix');
+        const loading = document.getElementById('pix-loading');
+        btn.style.display = 'none';
+        loading.style.display = 'block';
 
-    const paymentData = {
-        transaction_amount: 29.90,
-        description: `Upgrade PRO - ${currentUser.email}`,
-        payment_method_id: "pix",
-        payer: {
-            email: currentUser.email,
-            first_name: "Usuario",
-            last_name: "Efootball"
-        }
+        const paymentData = {
+            transaction_amount: 29.90,
+            description: `Upgrade PRO - ${currentUser.email}`,
+            payment_method_id: "pix",
+            payer: { email: currentUser.email, first_name: "Usuario" }
+        };
+
+        try {
+            const res = await fetch("https://cors-anywhere.herokuapp.com/https://api.mercadopago.com/v1/payments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MP_ACCESS_TOKEN}`, "X-Idempotency-Key": "key_" + Date.now() },
+                body: JSON.stringify(paymentData)
+            });
+            const data = await res.json();
+            if (data.point_of_interaction) {
+                const pixCode = data.point_of_interaction.transaction_data.qr_code;
+                const pixImg = data.point_of_interaction.transaction_data.qr_code_base64;
+                loading.style.display = 'none';
+                document.getElementById('pix-container').style.display = 'block';
+                document.getElementById('qrcode-img').innerHTML = `<img src="data:image/jpeg;base64,${pixImg}" style="width:180px; margin:10px auto; display:block;">`;
+                document.getElementById('pix-copy-code').setAttribute('data-code', pixCode);
+                checkStatus(data.id);
+            } else { alert("Erro na API."); loading.style.display = 'none'; btn.style.display = 'block'; }
+        } catch (e) { alert("Erro de conexão."); loading.style.display = 'none'; btn.style.display = 'block'; }
     };
-
-    try {
-        const res = await fetch("https://cors-anywhere.herokuapp.com/https://api.mercadopago.com/v1/payments", {
-    method: "POST",
-    headers: { 
-        "Content-Type": "application/json", 
-        "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
-        "X-Idempotency-Key": "key_" + Date.now()
-    },
-    body: JSON.stringify(paymentData)
-});
-
-        const data = await res.json();
-        console.log("Resposta do Mercado Pago:", data); // Verifique o erro real no F12 console
-
-        if (data.point_of_interaction) {
-            const pixCode = data.point_of_interaction.transaction_data.qr_code;
-            const pixImg = data.point_of_interaction.transaction_data.qr_code_base64;
-
-            loading.style.display = 'none';
-            document.getElementById('pix-container').style.display = 'block';
-            document.getElementById('qrcode-img').innerHTML = `<img src="data:image/jpeg;base64,${pixImg}" style="width:180px; margin:10px auto; display:block;">`;
-            document.getElementById('pix-copy-code').setAttribute('data-code', pixCode);
-            
-            checkStatus(data.id);
-        } else {
-            // Se cair aqui, o Mercado Pago respondeu, mas com erro (Ex: Token inválido)
-            loading.style.display = 'none';
-            btn.style.display = 'block';
-            alert("Erro na API: " + (data.message || "Verifique seu Access Token"));
-        }
-    } catch (e) {
-        // Se cair aqui, é erro de conexão ou CORS (bloqueio do navegador)
-        console.error("Erro de conexão/CORS:", e);
-        loading.style.display = 'none';
-        btn.style.display = 'block';
-        alert("Erro de conexão: O navegador bloqueou a requisição. Tente usar um navegador sem extensões de bloqueio.");
-    }
-};
 
     window.copyPix = () => {
         const code = document.getElementById('pix-copy-code').getAttribute('data-code');
         navigator.clipboard.writeText(code);
-        alert("Pix Copiado!");
+        alert("Copia e Cola copiado!");
     };
 
     function checkStatus(id) {
@@ -265,6 +237,44 @@
             }
         }, 5000);
     }
+
+    // --- COMPARTILHAMENTO ---
+    window.compartilharRodada = (titulo, partidas) => {
+        let texto = `🏆 *EFOOTBALL LEAGUE - ${titulo}*\n\n`;
+        partidas.forEach(m => {
+            const placar = m.status === 'done' ? `${m.g1} x ${m.g2}` : 'vs';
+            texto += `⚽ ${m.p1} ${placar} ${m.p2}\n`;
+        });
+        
+        if (navigator.share) {
+            navigator.share({ title: 'Resultado Rodada', text: texto });
+        } else {
+            navigator.clipboard.writeText(texto);
+            alert("Texto copiado para o WhatsApp!");
+        }
+    };
+
+    // --- SISTEMA DE SENHA ADM ---
+    window.showAdminAuth = () => {
+        const savedPIN = localStorage.getItem('admin_pin');
+        
+        if (!savedPIN) {
+            const newPIN = prompt("PRIMEIRO ACESSO: Crie uma senha numérica para a engrenagem:");
+            if (newPIN && newPIN.length > 0) {
+                localStorage.setItem('admin_pin', newPIN);
+                alert("Senha criada! Clique na engrenagem novamente para entrar.");
+            }
+        } else {
+            const inputPIN = prompt("Digite sua senha de acesso:");
+            if (inputPIN === savedPIN) {
+                isAdmin = true;
+                document.getElementById('admin-panel').style.display = 'block';
+                window.scrollTo(0, document.body.scrollHeight);
+            } else if (inputPIN !== null) {
+                alert("Senha incorreta!");
+            }
+        }
+    };
 
     // --- CORE DO SISTEMA ---
     function initData() {
@@ -300,18 +310,40 @@
             if (!groups[k]) groups[k] = [];
             groups[k].push(m);
         });
-        document.getElementById("results-by-round").innerHTML = Object.keys(groups).sort().map(k => `
-            <div class="rodada-group">
-                <div class="rodada-label">${k}</div>
-                ${groups[k].map(m => `
-                    <div class="match-item">
-                        <span style="font-size:10px; flex:1;">${m.p1}</span>
-                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScore('${m.id}')` : ''}">
-                            ${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}
-                        </span>
-                        <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
-                    </div>`).join('')}
-            </div>`).join('');
+        
+        const container = document.getElementById("results-by-round");
+        container.innerHTML = "";
+        
+        Object.keys(groups).sort().forEach(k => {
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'rodada-group';
+            
+            const label = document.createElement('div');
+            label.className = 'rodada-label';
+            label.innerHTML = `<span>${k}</span>`;
+            
+            const shareBtn = document.createElement('button');
+            shareBtn.className = 'btn-share';
+            shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
+            shareBtn.onclick = () => compartilharRodada(k, groups[k]);
+            
+            label.appendChild(shareBtn);
+            groupDiv.appendChild(label);
+            
+            groups[k].forEach(m => {
+                const item = document.createElement('div');
+                item.className = 'match-item';
+                item.innerHTML = `
+                    <span style="font-size:10px; flex:1;">${m.p1}</span>
+                    <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScore('${m.id}')` : ''}">
+                        ${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}
+                    </span>
+                    <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
+                `;
+                groupDiv.appendChild(item);
+            });
+            container.appendChild(groupDiv);
+        });
     }
 
     window.openScore = (id) => {
@@ -361,7 +393,6 @@
         await batch.commit();
     };
 
-    window.showAdminAuth = () => { if (prompt("PIN:") === "9498") { isAdmin = true; document.getElementById('admin-panel').style.display = 'block'; }};
     window.confirmReset = async () => { if(confirm("Resetar?")) { const b = writeBatch(db); allMatches.forEach(m => b.delete(doc(db,"partidas",m.id))); await b.commit(); }};
     window.deletePlayer = async (id) => { if (confirm("Remover?")) await deleteDoc(doc(db, "jogadores", id)); };
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
