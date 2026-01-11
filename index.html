@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EFOOTBALL LEAGUE PRO</title>
+    <title>EFOOTBALL PRO LEAGUE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -11,132 +11,153 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
         
-        /* Telas de Auth */
-        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        /* LOGIN SCREEN */
+        #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 30000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: var(--card); border-radius: 20px; padding: 30px; width: 100%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         .auth-input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 12px; font-family: 'Montserrat'; }
-        
-        header { text-align: center; padding: 20px 0; background: #000; border-bottom: 2px solid var(--primary); }
-        .container { max-width: 800px; margin: auto; padding: 12px; }
-        
-        .status-banner { background: #1a1f26; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-        .btn-upgrade { background: var(--pro); color: white; padding: 8px 12px; border-radius: 6px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 10px; }
 
+        header { text-align: center; padding: 20px 0; background: #000; border-bottom: 2px solid var(--primary); }
+        .live-badge { background: #ff0000; font-size: 10px; padding: 2px 8px; border-radius: 4px; color: white; animation: pulse 1.5s infinite; }
+        .container { max-width: 800px; margin: auto; padding: 12px; }
+
+        /* STATUS BANNER PRO */
+        .status-banner { background: #1a1f26; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .btn-upgrade-pro { background: var(--pro); color: white; padding: 6px 10px; border-radius: 4px; font-weight: 900; border: none; font-size: 9px; cursor: pointer; }
+
+        /* TABELA */
         .leaderboard-card { background: var(--card); border-radius: 12px; padding: 10px; margin-bottom: 20px; border: 1px solid var(--border); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 380px; }
         th { color: #666; padding: 10px 5px; text-transform: uppercase; font-size: 9px; text-align: center; border-bottom: 1px solid var(--border); }
         td { padding: 12px 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .name-td { text-align: left; font-weight: 700; color: #fff; }
+
+        .section-title { font-size: 12px; font-weight: 900; color: var(--primary); margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
         
-        .results-scroll-container { display: flex; overflow-x: auto; gap: 15px; padding: 5px 5px 15px; scrollbar-width: none; }
-        .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; position: relative; }
-        .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; }
-        
+        /* TICKER */
+        .ticker-wrapper { background: linear-gradient(90deg, rgba(0,255,136,0.05) 0%, rgba(5,7,10,1) 50%, rgba(0,255,136,0.05) 100%); border-top: 1px solid rgba(0,255,136,0.2); border-bottom: 1px solid rgba(0,255,136,0.2); margin: 15px -12px; padding: 12px 0; overflow: hidden; position: relative; display: flex; align-items: center; }
+        .ticker-label { position: absolute; left: 0; z-index: 10; background: var(--primary); color: #000; font-size: 10px; font-weight: 900; padding: 5px 15px; text-transform: uppercase; clip-path: polygon(0 0, 85% 0, 100% 100%, 0% 100%); }
+        .ticker-content { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker-scroll 25s linear infinite; }
+        .ticker-match { display: inline-flex; align-items: center; gap: 15px; margin-right: 60px; font-size: 12px; font-weight: 700; color: #fff; }
+        @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* RODADAS */
+        .results-scroll-container { display: flex; overflow-x: auto; gap: 15px; padding: 5px 5px 15px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); scroll-snap-align: start; flex-shrink: 0; }
+        .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; text-align: center; }
         .match-item { display: flex; align-items: center; justify-content: space-between; background: #000; margin-bottom: 6px; padding: 8px 12px; border-radius: 6px; border: 1px solid #1a1f26; }
         .match-item .p-score { background: var(--primary); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 4px; min-width: 45px; text-align: center; cursor: pointer; }
-        .match-item .p-score.open { background: #333; color: #777; font-size: 9px; }
 
+        /* MODAL */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
-        .modal-content { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 380px; border-radius: 15px; padding: 25px; text-align: center; }
-        .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; }
+        .modal-content { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 350px; border-radius: 15px; padding: 25px; text-align: center; }
+        .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-config { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.05); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; opacity: 0.1; z-index: 999; }
         
-        .pix-code-box { background: #000; color: var(--primary); padding: 10px; border-radius: 5px; font-size: 9px; word-break: break-all; margin: 10px 0; border: 1px dashed var(--primary); cursor: pointer; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
 <div id="auth-screen">
     <div class="auth-card">
-        <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 10px;">EFOOTBALL LEAGUE</div>
-        <p id="auth-status" style="font-size: 10px; color: #777; margin-bottom: 15px;">Acesse sua conta</p>
+        <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 10px;">EFOOTBALL PRO</div>
+        <p style="font-size: 10px; color: #777; margin-bottom: 15px;">Acesse sua liga profissional</p>
         <input type="email" id="auth-email" class="auth-input" placeholder="E-mail">
         <input type="password" id="auth-pw" class="auth-input" placeholder="Senha">
         <button id="btn-login" class="btn-adm" style="background: var(--primary); color:#000;">ENTRAR</button>
-        <button id="btn-create" class="btn-adm" style="background: #222; color:#fff; border: 1px solid #333;">CRIAR CONTA</button>
+        <button id="btn-create" class="btn-adm" style="background: #222; color:#fff;">CRIAR CONTA</button>
     </div>
 </div>
 
 <header>
-    <div style="font-size: 18px; font-weight: 900;">EFOOTBALL <span style="color:var(--primary)">CAMPEONATO</span></div>
+    <div style="font-size: 18px; font-weight: 900; letter-spacing: -1px;">EFOOTBALL <span style="color:var(--primary)">PRO LEAGUE</span></div>
+    <span class="live-badge">● SISTEMA ATIVO</span>
 </header>
 
 <div class="container">
     <div class="status-banner">
         <div>
             <span id="user-tag" style="font-weight:900; color:var(--primary);">CARREGANDO...</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Sincronizando...</span>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Sincronizando dados...</span>
         </div>
-        <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
+        <div style="display:flex; gap:5px;">
+            <button onclick="sharePublicLink()" class="btn-upgrade-pro" style="background:#444;">LINK <i class="fas fa-link"></i></button>
+            <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade-pro">VIRAR PRO ⚡</button>
+        </div>
     </div>
 
     <div class="leaderboard-card">
         <table id="leaderboard">
             <thead>
-                <tr><th>#</th><th style="text-align:left">Jogador</th><th>P</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr>
+                <tr><th>#</th><th style="text-align:left">Jogador</th><th>P</th><th>V</th><th>E</th><th>D</th><th>SG</th><th>TG</th></tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
 
+    <div class="section-title"><i class="fas fa-running"></i> Rodadas em Andamento</div>
     <div id="results-by-round" class="results-scroll-container"></div>
 
-    <div id="admin-panel" class="leaderboard-card" style="display:none; border: 1px solid var(--primary); margin-top:20px;">
-        <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">ADMINISTRAÇÃO</h4>
-        <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-            <input type="text" id="new-player-name" placeholder="Nome do Jogador" class="auth-input" style="margin:0; flex:1;">
-            <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:8px;">ADD</button>
-        </div>
-        <div id="admin-players-list" style="margin-bottom: 20px;"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:8px;">GERAR JOGOS</button>
-            <button onclick="limparDadosGerais()" style="background:#ff0055; border:none; color:#fff; padding:12px; font-weight:bold; border-radius:8px;">LIMPAR TUDO</button>
-        </div>
-        <button class="btn-adm" style="background:none; color:#555; margin-top:15px;" onclick="window.logout()">SAIR DA CONTA</button>
+    <button class="btn-adm" style="background: var(--card); color: var(--primary); border: 1px solid var(--border); padding:15px;" onclick="toggleConfrontos()">
+        CONFRONTOS POR JOGADOR <i class="fas fa-users"></i>
+    </button>
+    
+    <div id="confrontos-content" style="display:none; margin-top:15px;">
+        <input type="text" id="search-input" style="width:100%; padding:14px; background:#000; border:1px solid #333; color:#fff; border-radius:8px; margin-bottom:15px;" placeholder="Filtrar por nome..." onkeyup="renderMatchesByPlayer()">
+        <div id="matches-by-player"></div>
     </div>
-</div>
 
-<div id="upgrade-modal" class="modal">
-    <div class="modal-content">
-        <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
-        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
-            <div style="color: var(--gold); font-weight: 900; margin-bottom: 10px;">VALOR: R$ 19,90</div>
-            
-            <p style="font-size: 10px; color: #aaa;">1. Copie o PIX abaixo e pague:</p>
-            <div class="pix-code-box" id="pix-manual-code" onclick="copyManualPix()">
-                00020126430014br.gov.bcb.pix0121lukcoelhu@hotmail.com52040000530398654041.995802BR5912Lucas Coelho6009Sao Paulo62230519daqr4264446571991666304FB1C
-            </div>
-
-            <p style="font-size: 10px; color: #aaa; margin-top:15px;">2. Após pagar, envie o comprovante:</p>
-            <button onclick="enviarComprovanteZap()" class="btn-adm" style="background: #25D366; color: #fff; margin-bottom: 20px;">
-                <i class="fab fa-whatsapp"></i> ENVIAR COMPROVANTE
-            </button>
-
-            <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
-            
-            <p style="font-size: 10px; color: #aaa;">3. Cole a chave que recebeu abaixo:</p>
-            <input type="text" id="input-cupom" placeholder="Cole sua chave aqui" class="auth-input" style="margin-top:10px; border-color:var(--pro); text-align:center;">
-            <button id="btn-validar-cupom" class="btn-adm" style="background: var(--pro); color: #fff; margin-top:0;" onclick="ativarComCupom()">ATIVAR COM CHAVE PRO</button>
+    <div id="admin-panel" class="leaderboard-card" style="display:none; border: 1px solid var(--primary); margin-top:20px;">
+        <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">PAINEL CONTROLE</h4>
+        <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+            <input type="text" id="new-player-name" placeholder="Nome" style="flex:1; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
+            <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
         </div>
-        <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
+        <div id="admin-players-list"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:10px; font-weight:bold; border-radius:5px;">GERAR JOGOS</button>
+            <button onclick="confirmReset()" style="background:#444; border:none; color:#fff; padding:10px; font-weight:bold; border-radius:5px;">LIMPAR</button>
+        </div>
+        <button class="btn-adm" style="background:#25D366; color:white;" onclick="shareResultsWhatsApp()"><i class="fab fa-whatsapp"></i> COMPARTILHAR RODADAS</button>
+        <button class="btn-adm" style="background:#222; color:gray;" onclick="logout()">SAIR DA CONTA</button>
     </div>
 </div>
 
 <div id="score-modal" class="modal">
     <div class="modal-content">
-        <div id="modal-p1"></div>
-        <div style="display:flex; justify-content:center; gap:10px; margin:15px 0;">
-            <input type="number" id="input-g1" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
-            <input type="number" id="input-g2" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
+        <div style="font-size:10px; color:var(--gold); font-weight:800; margin-bottom:15px;">ATUALIZAR PLACAR</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; color:#fff; font-weight:bold;">
+            <div id="modal-p1" style="flex:1; text-align:right;"></div>
+            <div style="width:30px; opacity:0.3;">X</div>
+            <div id="modal-p2" style="flex:1; text-align:left;"></div>
         </div>
-        <div id="modal-p2"></div>
+        <div class="score-input-wrap" style="display:flex; justify-content:center; gap:10px; margin:20px 0;">
+            <input type="number" id="input-g1" style="width:60px; height:60px; background:#000; border:1px solid var(--primary); color:#fff; text-align:center; font-size:24px; border-radius:8px;">
+            <input type="number" id="input-g2" style="width:60px; height:60px; background:#000; border:1px solid var(--primary); color:#fff; text-align:center; font-size:24px; border-radius:8px;">
+        </div>
         <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR</button>
+        <button class="btn-adm" style="background:none; color:#666;" onclick="document.getElementById('score-modal').style.display='none'">CANCELAR</button>
     </div>
 </div>
 
-<button style="position:fixed; bottom:20px; right:20px; opacity:0.1; background:none; border:none; color:white; font-size: 20px;" onclick="showAdminAuth()"><i class="fas fa-cog"></i></button>
+<div id="upgrade-modal" class="modal">
+    <div class="modal-content">
+        <h2 style="color: var(--pro); font-size: 18px; margin-bottom:10px;">UPGRADE PRO ⚡</h2>
+        <p style="font-size:11px; color:#aaa; margin-bottom:20px;">Libere jogadores ilimitados e modo volta.</p>
+        <div style="background:#000; padding:10px; border-radius:8px; font-size:10px; color:var(--primary); word-break:break-all; border:1px dashed var(--pro);" onclick="copyPix()">
+            00020126430014br.gov.bcb.pix0121lukcoelhu@hotmail.com52040000530398654041.995802BR5912Lucas Coelho6009Sao Paulo62230519daqr4264446571991666304FB1C
+        </div>
+        <button class="btn-adm" style="background:#25D366; color:white; margin-top:15px;" onclick="enviarComprovanteZap()">ENVIAR COMPROVANTE</button>
+        <input type="text" id="input-cupom" placeholder="Chave de Ativação" class="auth-input" style="margin-top:10px; text-align:center;">
+        <button class="btn-adm" style="background:var(--pro); color:white;" onclick="ativarComCupom()">ATIVAR AGORA</button>
+    </div>
+</div>
+
+<button class="btn-config" onclick="showAdminAuth()"><i class="fas fa-cog"></i></button>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, where, getDoc, setDoc, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, where, getDoc, setDoc, writeBatch, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -147,148 +168,166 @@
         messagingSenderId: "718903184280",
         appId: "1:718903184280:web:b028397ff37450fd7cb9ed"
     };
-    
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
     setPersistence(auth, browserLocalPersistence);
 
-    let currentUser = null;
+    let ownerID = null;
     let isPro = false;
     let isAdmin = false;
     let globalPlayers = [];
     let allMatches = [];
     let currentMatchId = null;
 
-        window.enviarComprovanteZap = () => {
-        const telefone = "5512988600188"; // COLOQUE SEU WHATSAPP AQUI (DDI + DDD + NUMERO)
-        const emailUsuario = currentUser ? currentUser.email : "Não identificado";
-        const texto = `Olá! Acabei de fazer o PIX para o Plano PRO. %0A%0A📧 Minha conta: *${emailUsuario}*%0A%0A_Aguardando minha chave de ativação!_`;
-    
-        window.open(`https://wa.me/${telefone}?text=${texto}`, '_blank');
-    };
+    // Lógica de URL para visualização pública
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewID = urlParams.get('view');
 
     onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
+        if (viewID) {
+            ownerID = viewID;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('user-tag').innerText = "MODO ESPECTADOR";
+        } else if (user) {
+            ownerID = user.uid;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('user-tag').innerText = user.email.split('@')[0].toUpperCase();
+            
             const userSnap = await getDoc(doc(db, "usuarios", user.uid));
             if (userSnap.exists() && userSnap.data().plan === "pro") {
                 isPro = true;
-                document.getElementById('limit-info').innerText = "PLANO PROFISSIONAL ⚡";
+                document.getElementById('limit-info').innerText = "CERTIFICADO PRO ⚡";
                 document.getElementById('btn-upgrade-top').style.display = 'none';
             } else {
-                isPro = false;
                 document.getElementById('limit-info').innerText = "PLANO GRÁTIS (MÁX 4)";
             }
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('user-tag').innerText = user.email.split('@')[0].toUpperCase();
-            initData();
         } else {
             document.getElementById('auth-screen').style.display = 'flex';
+            return;
         }
-        
+        initData();
     });
 
-    // SISTEMA DE CUPOM (PROTEÇÃO ANTI-FRAUDE)
-    window.ativarComCupom = async () => {
-        const codigo = document.getElementById('input-cupom').value.trim().toUpperCase();
-        if(!codigo) return alert("Digite a chave!");
-        const btn = document.getElementById('btn-validar-cupom');
-        btn.disabled = true; btn.innerText = "VERIFICANDO...";
-
-        try {
-            const cupomRef = doc(db, "cupons", codigo);
-            const cupomSnap = await getDoc(cupomRef);
-
-            if (cupomSnap.exists()) {
-                await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email, cupomUsado: codigo }, { merge: true });
-                await deleteDoc(cupomRef); // Apaga o cupom para não ser reusado
-                alert("CONTA PRO ATIVADA COM SUCESSO!");
-                location.reload();
-            } else {
-                alert("Chave inválida ou já utilizada!");
-                btn.disabled = false; btn.innerText = "ATIVAR COM CHAVE PRO";
-            }
-        } catch (e) {
-            alert("Erro na ativação. Verifique sua internet.");
-            btn.disabled = false;
-        }
-    };
-
-    // LOGIN / CADASTRO
-    document.getElementById('btn-login').onclick = async () => {
-        try { await signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pw').value); }
-        catch (e) { alert("Dados incorretos."); }
-    };
-
-    document.getElementById('btn-create').onclick = async () => {
-        try { await createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pw').value); }
-        catch (e) { alert("E-mail inválido ou já existe."); }
-    };
-
-    window.logout = () => signOut(auth).then(() => location.reload());
-
-    // CARREGAR DADOS
     function initData() {
-        onSnapshot(query(collection(db, "jogadores"), where("owner", "==", currentUser.uid)), (snap) => {
+        onSnapshot(query(collection(db, "jogadores"), where("owner", "==", ownerID)), (snap) => {
             globalPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            globalPlayers.sort((a,b) => b.pts - a.pts || b.sg - a.sg);
-            renderTable();
-            renderAdminPlayers();
+            globalPlayers.sort((a,b) => b.pts - a.pts || b.sg - a.sg || (b.gp || 0) - (a.gp || 0));
+            renderLeaderboard();
+            updateAdminList();
         });
-        onSnapshot(query(collection(db, "partidas"), where("owner", "==", currentUser.uid)), (snap) => {
+        onSnapshot(query(collection(db, "partidas"), where("owner", "==", ownerID)), (snap) => {
             allMatches = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            renderMatches();
+            renderResultsByRound();
         });
     }
 
-    function renderTable() {
+    // --- REUTILIZANDO SUAS FUNÇÕES DE RENDERIZAÇÃO ---
+
+    function renderLeaderboard() {
         document.querySelector("#leaderboard tbody").innerHTML = globalPlayers.map((p, i) => `
-            <tr><td>${i+1}º</td><td style="text-align:left; font-weight:700;">${p.nome}</td><td style="color:var(--primary)">${p.pts}</td><td>${p.v}</td><td>${p.e}</td><td>${p.d}</td><td>${p.sg}</td></tr>
-        `).join('');
+            <tr>
+                <td style="color:var(--primary); font-weight:800;">${i+1}º</td>
+                <td class="name-td">${p.nome}</td>
+                <td style="color:var(--primary); font-weight:900;">${p.pts}</td>
+                <td>${p.v}</td><td>${p.e}</td><td>${p.d}</td><td>${p.sg}</td>
+                <td style="font-weight:bold;">${p.gp || 0}</td>
+            </tr>`).join('');
     }
 
-    function renderAdminPlayers() {
-        document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222; align-items:center;">
-                <span style="font-size:12px;">${p.nome}</span>
-                <div style="display:flex; gap:15px;"><i class="fas fa-edit" style="color:var(--gold);" onclick="editPlayer('${p.id}', '${p.nome}')"></i><i class="fas fa-trash" style="color:var(--accent);" onclick="deletePlayer('${p.id}')"></i></div>
+    function renderResultsByRound() {
+        const container = document.getElementById("results-by-round");
+        if(allMatches.length === 0) return;
+        const groups = {};
+        allMatches.forEach(m => {
+            const label = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
+            if(!groups[label]) groups[label] = { turno: m.turno, rodada: m.rodada, games: [], hasStarted: false };
+            groups[label].games.push(m);
+            if(m.status === 'done') groups[label].hasStarted = true;
+        });
+        const sortedLabels = Object.keys(groups).sort((a,b) => groups[a].turno - groups[b].turno || groups[a].rodada - groups[b].rodada);
+        
+        // Live Ticker (Simplificado)
+        const pending = allMatches.filter(m => m.status === 'open')[0];
+        if(pending) renderTicker(pending);
+
+        const active = sortedLabels.filter(l => groups[l].hasStarted || isAdmin);
+        container.innerHTML = active.map(label => `
+            <div class="rodada-group">
+                <div class="rodada-label">${label}</div>
+                ${groups[label].games.map(m => `
+                    <div class="match-item">
+                        <span class="p-name" style="font-size:10px; flex:1; text-align:right">${m.p1}</span>
+                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScoreModal('${m.id}')` : ''}">
+                            ${m.status === 'done' ? `${m.g1} - ${m.g2}` : 'VS'}
+                        </span>
+                        <span class="p-name" style="font-size:10px; flex:1; text-align:left">${m.p2}</span>
+                    </div>`).join('')}
             </div>`).join('');
     }
 
+    function renderTicker(m) {
+        const old = document.getElementById('live-ticker-container');
+        if(old) old.remove();
+        const html = `
+            <div id="live-ticker-container" class="ticker-wrapper">
+                <div class="ticker-label">A Seguir</div>
+                <div class="ticker-content">
+                    <div class="ticker-match"><span>${m.p1.toUpperCase()}</span> <span style="color:var(--primary)">VS</span> <span>${m.p2.toUpperCase()}</span></div>
+                </div>
+            </div>`;
+        document.getElementById("results-by-round").insertAdjacentHTML('beforebegin', html);
+    }
+
+    window.toggleConfrontos = () => {
+        const el = document.getElementById('confrontos-content');
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        if(el.style.display === 'block') renderMatchesByPlayer();
+    };
+
+    window.renderMatchesByPlayer = () => {
+        const container = document.getElementById("matches-by-player");
+        const search = document.getElementById("search-input").value.toLowerCase();
+        let players = [...globalPlayers].filter(p => p.nome.toLowerCase().includes(search));
+
+        container.innerHTML = players.map(player => {
+            const pMatches = allMatches.filter(m => m.p1 === player.nome || m.p2 === player.nome);
+            return `
+                <button class="btn-adm" style="background:#1a1f26; color:#fff; justify-content:space-between; margin-bottom:5px;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                    ${player.nome.toUpperCase()} <i class="fas fa-chevron-down"></i>
+                </button>
+                <div style="display:none; padding:10px; background:rgba(0,0,0,0.2); border-radius:8px; margin-bottom:10px;">
+                    ${pMatches.map(m => `
+                        <div class="match-item" style="border:none; background:none;">
+                            <span style="font-size:9px; color:${m.p1 === player.nome ? 'var(--primary)' : '#777'}">${m.p1}</span>
+                            <span style="font-size:10px; font-weight:900;">${m.status==='done' ? m.g1+' - '+m.g2 : 'VS'}</span>
+                            <span style="font-size:9px; color:${m.p2 === player.nome ? 'var(--primary)' : '#777'}">${m.p2}</span>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }).join('');
+    };
+
+    // --- FUNÇÕES DE ADMIN ---
+
+    window.showAdminAuth = () => {
+        const pin = prompt("PIN ADMIN:");
+        if(pin === "9498") {
+            isAdmin = true;
+            document.getElementById('admin-panel').style.display = 'block';
+            renderResultsByRound();
+        }
+    };
+
     window.addPlayer = async () => {
-        if (!isPro && globalPlayers.length >= 4) return openUpgradeModal();
+        if(!isPro && globalPlayers.length >= 4) return alert("Limite do plano grátis atingido!");
         const n = document.getElementById("new-player-name").value;
-        if (n) await addDoc(collection(db, "jogadores"), { nome: n, pts: 0, v: 0, e: 0, d: 0, sg: 0, owner: currentUser.uid });
+        if(n) await addDoc(collection(db, "jogadores"), { nome: n, pts:0, v:0, e:0, d:0, sg:0, gp:0, owner: ownerID });
         document.getElementById("new-player-name").value = "";
     };
 
-    function renderMatches() {
-        const container = document.getElementById("results-by-round");
-        container.innerHTML = "";
-        const groups = {};
-        allMatches.forEach(m => {
-            const k = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
-            if (!groups[k]) groups[k] = [];
-            groups[k].push(m);
-        });
-        Object.keys(groups).sort().forEach(k => {
-            const div = document.createElement('div');
-            div.className = 'rodada-group';
-            div.innerHTML = `<div class="rodada-label">${k}</div>`;
-            groups[k].forEach(m => {
-                div.innerHTML += `
-                    <div class="match-item">
-                        <span style="font-size:10px; flex:1;">${m.p1}</span>
-                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScore('${m.id}')` : ''}">${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}</span>
-                        <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
-                    </div>`;
-            });
-            container.appendChild(div);
-        });
-    }
-
-    window.openScore = (id) => {
+    window.openScoreModal = (id) => {
         currentMatchId = id;
         const m = allMatches.find(x => x.id === id);
         document.getElementById('modal-p1').innerText = m.p1;
@@ -297,37 +336,45 @@
     };
 
     window.saveScore = async () => {
-        const g1 = parseInt(document.getElementById('input-g1').value) || 0;
-        const g2 = parseInt(document.getElementById('input-g2').value) || 0;
+        const g1 = parseInt(document.getElementById('input-g1').value);
+        const g2 = parseInt(document.getElementById('input-g2').value);
         await updateDoc(doc(db, "partidas", currentMatchId), { g1, g2, status: 'done' });
         document.getElementById('score-modal').style.display = 'none';
-        const batch = writeBatch(db);
-        globalPlayers.forEach(p => {
-            let s = { pts: 0, v: 0, e: 0, d: 0, sg: 0 };
-            allMatches.filter(m => (m.status === 'done' || m.id === currentMatchId) && (m.p1 === p.nome || m.p2 === p.nome)).forEach(m => {
-                const isP1 = m.p1 === p.nome;
-                const mg = isP1 ? (m.id === currentMatchId ? g1 : m.g1) : (m.id === currentMatchId ? g2 : m.g2);
-                const og = isP1 ? (m.id === currentMatchId ? g2 : m.g2) : (m.id === currentMatchId ? g1 : m.g1);
-                s.sg += (mg - og);
-                if (mg > og) { s.pts += 3; s.v++; } else if (mg === og) { s.pts += 1; s.e++; } else s.d++;
-            });
-            batch.update(doc(db, "jogadores", p.id), s);
-        });
-        await batch.commit();
+        recalculateTable();
     };
 
+    async function recalculateTable() {
+        const batch = writeBatch(db);
+        for (let p of globalPlayers) {
+            let st = { pts:0, v:0, e:0, d:0, sg:0, gp:0 };
+            allMatches.filter(m => m.status === 'done' && (m.p1 === p.nome || m.p2 === p.nome)).forEach(m => {
+                const isP1 = m.p1 === p.nome;
+                const mg = isP1 ? m.g1 : m.g2;
+                const og = isP1 ? m.g2 : m.g1;
+                st.gp += mg;
+                st.sg += (mg - og);
+                if(mg > og) { st.pts += 3; st.v++; }
+                else if(mg === og) { st.pts += 1; st.e++; }
+                else st.d++;
+            });
+            batch.update(doc(db, "jogadores", p.id), st);
+        }
+        await batch.commit();
+    }
+
     window.sortearTorneio = async () => {
+        if(!confirm("Gerar nova tabela?")) return;
         const batch = writeBatch(db);
         allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
         let p = [...globalPlayers];
-        if (p.length < 2) return;
         if (p.length % 2 !== 0) p.push({ nome: "FOLGA", id: "bye" });
-        for (let r = 0; r < p.length - 1; r++) {
-            for (let i = 0; i < p.length / 2; i++) {
-                const p1 = p[i], p2 = p[p.length - 1 - i];
+        const n = p.length;
+        for (let r = 0; r < n - 1; r++) {
+            for (let i = 0; i < n / 2; i++) {
+                const p1 = p[i], p2 = p[n-1-i];
                 if (p1.id !== "bye" && p2.id !== "bye") {
-                    batch.set(doc(collection(db, "partidas")), { p1: p1.nome, p2: p2.nome, g1: 0, g2: 0, status: 'open', turno: 1, rodada: r + 1, owner: currentUser.uid });
-                    if(isPro) batch.set(doc(collection(db, "partidas")), { p1: p2.nome, p2: p1.nome, g1: 0, g2: 0, status: 'open', turno: 2, rodada: r + 1, owner: currentUser.uid });
+                    batch.set(doc(collection(db, "partidas")), { p1: p1.nome, p2: p2.nome, g1:0, g2:0, status:'open', turno:1, rodada: r + 1, owner: ownerID });
+                    if(isPro) batch.set(doc(collection(db, "partidas")), { p1: p2.nome, p2: p1.nome, g1:0, g2:0, status:'open', turno:2, rodada: r + 1, owner: ownerID });
                 }
             }
             p.splice(1, 0, p.pop());
@@ -335,16 +382,27 @@
         await batch.commit();
     };
 
-    window.showAdminAuth = () => {
-        const p = prompt("Senha da engrenagem:");
-        if(p === localStorage.getItem('admin_pin') || p === "123") {
-            isAdmin = true;
-            document.getElementById('admin-panel').style.display = 'block';
-            window.scrollTo(0, document.body.scrollHeight);
-        }
-    };
+    // --- SISTEMA PRO ---
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
-    window.copyManualPix = () => { navigator.clipboard.writeText(document.getElementById('pix-manual-code').innerText.trim()); alert("Copiado!"); };
+    window.logout = () => signOut(auth).then(() => location.reload());
+    window.sharePublicLink = () => {
+        const url = window.location.origin + window.location.pathname + "?view=" + ownerID;
+        navigator.clipboard.writeText(url);
+        alert("Link de espectador copiado!");
+    };
+    
+    document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pw').value);
+    document.getElementById('btn-create').onclick = () => createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pw').value);
+
+    window.ativarComCupom = async () => {
+        const cod = document.getElementById('input-cupom').value.trim().toUpperCase();
+        const snap = await getDoc(doc(db, "cupons", cod));
+        if (snap.exists()) {
+            await setDoc(doc(db, "usuarios", ownerID), { plan: "pro" }, { merge: true });
+            await deleteDoc(doc(db, "cupons", cod));
+            alert("PRO ATIVADO!"); location.reload();
+        } else alert("Código inválido!");
+    };
 </script>
 </body>
 </html>
