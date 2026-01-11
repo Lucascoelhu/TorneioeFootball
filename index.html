@@ -11,9 +11,10 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
         
+        /* Telas de Autenticação Melhores */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: var(--card); border-radius: 20px; padding: 30px; width: 100%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
-        .auth-input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 12px; font-family: 'Montserrat'; }
+        .auth-input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 12px; font-family: 'Montserrat'; width: 100%; }
         
         header { text-align: center; padding: 20px 0; background: #000; border-bottom: 2px solid var(--primary); }
         .live-badge { background: #ff0000; font-size: 10px; padding: 2px 8px; border-radius: 4px; color: white; animation: pulse 1.5s infinite; }
@@ -48,11 +49,15 @@
 
 <div id="auth-screen">
     <div class="auth-card">
-        <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 10px;">EFOOTBALL LEAGUE</div>
-        <input type="email" id="auth-email" class="auth-input" placeholder="E-mail">
-        <input type="password" id="auth-pw" class="auth-input" placeholder="Senha">
-        <button id="btn-login" class="btn-adm" style="background: var(--primary); color:#000;">ENTRAR OU CADASTRAR</button>
-        <p id="auth-msg" style="font-size: 10px; color: #777; margin-top: 10px;">Aguardando dados...</p>
+        <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 20px;">EFOOTBALL LEAGUE</div>
+        <input type="email" id="auth-email" class="auth-input" placeholder="Seu E-mail">
+        <input type="password" id="auth-pw" class="auth-input" placeholder="Sua Senha">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+            <button id="btn-login-action" class="btn-adm" style="background: var(--primary); color:#000; margin-top:0;">ENTRAR</button>
+            <button id="btn-register-action" class="btn-adm" style="background: #333; color:#fff; margin-top:0;">CRIAR CONTA</button>
+        </div>
+        <p id="auth-msg" style="font-size: 10px; color: #ffaa00; margin-top: 15px; min-height: 12px;"></p>
     </div>
 </div>
 
@@ -65,7 +70,7 @@
     <div class="status-banner">
         <div>
             <span id="user-tag" style="font-weight:900; color:var(--primary);">USUÁRIO</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Carregando...</span>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Verificando...</span>
         </div>
         <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
@@ -87,8 +92,8 @@
             <input type="text" id="new-player-name" placeholder="Nome do Jogador" style="flex:1; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
             <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
         </div>
-        
-        <div id="admin-players-list" style="margin-bottom: 15px; background: #000; border-radius: 8px; padding: 5px;"></div>
+
+        <div id="admin-players-list" style="margin-bottom: 15px; background: rgba(0,0,0,0.4); border-radius: 8px;"></div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
             <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">GERAR TABELA</button>
@@ -101,7 +106,6 @@
 <div id="upgrade-modal" class="modal">
     <div class="modal-content">
         <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
-        <p style="font-size: 11px; color:#aaa;">Ilimitado + Jogos de Ida e Volta</p>
         <div style="margin: 20px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
             <div style="color: var(--gold); font-weight: 900; margin-bottom: 10px;">VALOR: R$ 29,90</div>
             <i class="fas fa-qrcode" style="font-size: 60px; color: white; margin-bottom: 10px;"></i>
@@ -110,24 +114,10 @@
             </div>
             <p style="font-size: 9px; color: #777; margin-top: 5px;">Toque no código para copiar</p>
         </div>
-        <button class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">JÁ PAGUEI / LIBERAR CONTA</button>
+        <button class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">JÁ PAGUEI / ATIVAR PRO</button>
         <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
     </div>
 </div>
-
-<div id="score-modal" class="modal">
-    <div class="modal-content">
-        <div id="modal-p1" style="font-weight:900;"></div>
-        <div style="display:flex; justify-content:center; gap:10px; margin:15px 0;">
-            <input type="number" id="input-g1" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
-            <input type="number" id="input-g2" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
-        </div>
-        <div id="modal-p2" style="font-weight:900;"></div>
-        <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR PLACAR</button>
-    </div>
-</div>
-
-<button style="position:fixed; bottom:20px; right:20px; opacity:0.2; background:none; border:none; color:white; font-size: 20px;" onclick="showAdminAuth()"><i class="fas fa-cog"></i></button>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
@@ -152,14 +142,13 @@
     let isAdmin = false;
     let globalPlayers = [];
     let allMatches = [];
-    let currentMatchId = null;
 
+    // --- SISTEMA DE LOGIN/CADASTRO SEPARADO ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
             const userRef = doc(db, "usuarios", user.uid);
             const userSnap = await getDoc(userRef);
-            
             if (userSnap.exists() && userSnap.data().plan === "pro") {
                 isPro = true;
                 document.getElementById('limit-info').innerText = "PLANO PROFISSIONAL ⚡";
@@ -168,7 +157,6 @@
                 isPro = false;
                 document.getElementById('limit-info').innerText = "PLANO GRÁTIS (LIMITE 4)";
             }
-            
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('user-tag').innerText = user.email.split('@')[0].toUpperCase();
             initData();
@@ -177,77 +165,66 @@
         }
     });
 
-    document.getElementById('btn-login').onclick = async () => {
+    document.getElementById('btn-login-action').onclick = async () => {
         const e = document.getElementById('auth-email').value;
         const p = document.getElementById('auth-pw').value;
         const msg = document.getElementById('auth-msg');
-        if(!e || !p) return alert("Preencha tudo.");
-        
-        try { 
-            msg.innerText = "Tentando entrar...";
-            await signInWithEmailAndPassword(auth, e, p); 
-        } catch (err) { 
-            try { 
-                msg.innerText = "Criando nova conta...";
-                await createUserWithEmailAndPassword(auth, e, p); 
-            } catch (err2) { 
-                alert("Erro: Verifique e-mail/senha ou se a conta já existe."); 
-            }
+        if(!e || !p) return msg.innerText = "Preencha e-mail e senha.";
+        try {
+            msg.innerText = "Entrando...";
+            await signInWithEmailAndPassword(auth, e, p);
+        } catch (err) { msg.innerText = "Senha ou E-mail incorretos."; }
+    };
+
+    document.getElementById('btn-register-action').onclick = async () => {
+        const e = document.getElementById('auth-email').value;
+        const p = document.getElementById('auth-pw').value;
+        const msg = document.getElementById('auth-msg');
+        if(p.length < 6) return msg.innerText = "Senha deve ter 6 dígitos.";
+        try {
+            msg.innerText = "Criando conta...";
+            await createUserWithEmailAndPassword(auth, e, p);
+        } catch (err) { msg.innerText = "E-mail já cadastrado."; }
+    };
+
+    window.logout = () => signOut(auth).then(() => location.reload());
+
+    // --- FUNÇÕES DE PAGAMENTO ---
+    window.confirmarPagamento = async () => {
+        if(confirm("Confirma que realizou o pagamento via PIX?\nSua conta será ativada imediatamente.")) {
+            try {
+                await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email }, { merge: true });
+                alert("CONTA ATIVADA! Aproveite o Plano PRO.");
+                location.reload();
+            } catch (e) { alert("Erro ao ativar. Tente novamente."); }
         }
     };
 
-    window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(() => location.reload()); };
-
-    // --- PAGAMENTO ---
     window.copyManualPix = () => {
         const code = document.getElementById('pix-manual-code').innerText.trim();
-        navigator.clipboard.writeText(code).then(() => alert("Código Pix Copiado!"));
+        navigator.clipboard.writeText(code).then(() => alert("Pix Copiado!"));
     };
 
-    window.confirmarPagamento = async () => {
-        if(confirm("Você já pagou os R$ 29,90 via PIX?")) {
-            await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email }, { merge: true });
-            alert("Sua conta PRO foi ativada com sucesso!");
-            location.reload();
-        }
-    };
-
-    // --- ADMIN ---
-    window.showAdminAuth = () => {
-        const savedPIN = localStorage.getItem('admin_pin');
-        if (!savedPIN) {
-            const newPIN = prompt("Crie uma SENHA para a engrenagem (apenas este aparelho):");
-            if (newPIN) localStorage.setItem('admin_pin', newPIN);
-        } else {
-            if (prompt("Senha da engrenagem:") === savedPIN) {
-                isAdmin = true;
-                document.getElementById('admin-panel').style.display = 'block';
-                window.scrollTo(0, document.body.scrollHeight);
-            } else { alert("Senha incorreta."); }
-        }
-    };
-
+    // --- LIMPEZA E GESTÃO (ATUALIZADO) ---
     window.limparDadosGerais = async () => {
-        if (!confirm("Isso apagará todas as partidas e zerará os pontos. Confirmar?")) return;
+        if (!confirm("Isso apagará todas as partidas e zerará os pontos de todos. Continuar?")) return;
         const batch = writeBatch(db);
         allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
-        globalPlayers.forEach(p => batch.update(doc(db, "jogadores", p.id), { pts:0, v:0, e:0, d:0, sg:0 }));
+        globalPlayers.forEach(p => batch.update(doc(db, "jogadores", p.id), { pts: 0, v: 0, e: 0, d: 0, sg: 0 }));
         await batch.commit();
-        alert("Sistema zerado!");
-    };
-
-    window.editPlayer = async (id, nomeAntigo) => {
-        const novoNome = prompt("Novo nome para " + nomeAntigo + ":", nomeAntigo);
-        if(novoNome && novoNome !== nomeAntigo) {
-            await updateDoc(doc(db, "jogadores", id), { nome: novoNome });
-        }
+        alert("Sistema Limpo!");
     };
 
     window.deletePlayer = async (id) => {
         if (confirm("Remover este jogador permanentemente?")) await deleteDoc(doc(db, "jogadores", id));
     };
 
-    // --- CORE ---
+    window.editPlayerName = async (id, antigo) => {
+        const novo = prompt("Novo nome para " + antigo + ":", antigo);
+        if(novo && novo !== antigo) await updateDoc(doc(db, "jogadores", id), { nome: novo });
+    };
+
+    // --- RESTO DO MOTOR DO APP ---
     function initData() {
         onSnapshot(query(collection(db, "jogadores"), where("owner", "==", currentUser.uid)), (snap) => {
             globalPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -261,8 +238,19 @@
         });
     }
 
+    function renderAdminPlayers() {
+        document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
+            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #222; font-size:12px;">
+                <span>${p.nome}</span>
+                <div>
+                    <i class="fas fa-edit" style="color:var(--gold); margin-right:15px;" onclick="editPlayerName('${p.id}', '${p.nome}')"></i>
+                    <i class="fas fa-trash" style="color:var(--accent);" onclick="deletePlayer('${p.id}')"></i>
+                </div>
+            </div>`).join('');
+    }
+
     window.addPlayer = async () => {
-        if (!isPro && globalPlayers.length >= 4) return document.getElementById('upgrade-modal').style.display='flex';
+        if (!isPro && globalPlayers.length >= 4) return openUpgradeModal();
         const n = document.getElementById("new-player-name").value;
         if (n) await addDoc(collection(db, "jogadores"), { nome: n, pts: 0, v: 0, e: 0, d: 0, sg: 0, owner: currentUser.uid });
         document.getElementById("new-player-name").value = "";
@@ -272,17 +260,6 @@
         document.querySelector("#leaderboard tbody").innerHTML = globalPlayers.map((p, i) => `
             <tr><td>${i+1}º</td><td style="text-align:left; font-weight:700;">${p.nome}</td><td style="color:var(--primary)">${p.pts}</td><td>${p.v}</td><td>${p.e}</td><td>${p.d}</td><td>${p.sg}</td></tr>
         `).join('');
-    }
-
-    function renderAdminPlayers() {
-        document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #222;">
-                <span style="font-size:12px;">${p.nome}</span>
-                <div style="display:flex; gap:15px;">
-                    <i class="fas fa-edit" style="color:var(--gold);" onclick="editPlayer('${p.id}', '${p.nome}')"></i>
-                    <i class="fas fa-trash" style="color:#ff0055;" onclick="deletePlayer('${p.id}')"></i>
-                </div>
-            </div>`).join('');
     }
 
     function renderMatches() {
@@ -302,7 +279,7 @@
                 div.innerHTML += `
                     <div class="match-item">
                         <span style="font-size:10px; flex:1;">${m.p1}</span>
-                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScore('${m.id}')` : ''}">${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}</span>
+                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}">${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}</span>
                         <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
                     </div>`;
             });
@@ -310,56 +287,18 @@
         });
     }
 
-    window.openScore = (id) => {
-        currentMatchId = id;
-        const m = allMatches.find(x => x.id === id);
-        document.getElementById('modal-p1').innerText = m.p1;
-        document.getElementById('modal-p2').innerText = m.p2;
-        document.getElementById('score-modal').style.display = 'flex';
-    };
-
-    window.saveScore = async () => {
-        const g1 = parseInt(document.getElementById('input-g1').value) || 0;
-        const g2 = parseInt(document.getElementById('input-g2').value) || 0;
-        await updateDoc(doc(db, "partidas", currentMatchId), { g1, g2, status: 'done' });
-        document.getElementById('score-modal').style.display = 'none';
-        
-        const batch = writeBatch(db);
-        globalPlayers.forEach(p => {
-            let s = { pts: 0, v: 0, e: 0, d: 0, sg: 0 };
-            allMatches.filter(m => (m.status === 'done' || m.id === currentMatchId) && (m.p1 === p.nome || m.p2 === p.nome)).forEach(m => {
-                const isP1 = m.p1 === p.nome;
-                const mg = isP1 ? (m.id === currentMatchId ? g1 : m.g1) : (m.id === currentMatchId ? g2 : m.g2);
-                const og = isP1 ? (m.id === currentMatchId ? g2 : m.g2) : (m.id === currentMatchId ? g1 : m.g1);
-                s.sg += (mg - og);
-                if (mg > og) { s.pts += 3; s.v++; } else if (mg === og) { s.pts += 1; s.e++; } else s.d++;
-            });
-            batch.update(doc(db, "jogadores", p.id), s);
-        });
-        await batch.commit();
-    };
-
-    window.sortearTorneio = async () => {
-        const batch = writeBatch(db);
-        allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
-        let p = [...globalPlayers];
-        if (p.length < 2) return alert("Adicione pelo menos 2 jogadores.");
-        if (p.length % 2 !== 0) p.push({ nome: "FOLGA", id: "bye" });
-        for (let r = 0; r < p.length - 1; r++) {
-            for (let i = 0; i < p.length / 2; i++) {
-                const p1 = p[i], p2 = p[p.length - 1 - i];
-                if (p1.id !== "bye" && p2.id !== "bye") {
-                    batch.set(doc(collection(db, "partidas")), { p1: p1.nome, p2: p2.nome, g1: 0, g2: 0, status: 'open', turno: 1, rodada: r + 1, owner: currentUser.uid });
-                    if(isPro) batch.set(doc(collection(db, "partidas")), { p1: p2.nome, p2: p1.nome, g1: 0, g2: 0, status: 'open', turno: 2, rodada: r + 1, owner: currentUser.uid });
-                }
-            }
-            p.splice(1, 0, p.pop());
-        }
-        await batch.commit();
-        alert("Tabela gerada!");
-    };
-
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
+    window.showAdminAuth = () => {
+        const pin = localStorage.getItem('admin_pin') || prompt("Crie uma senha de acesso:");
+        if (pin) {
+            localStorage.setItem('admin_pin', pin);
+            if (prompt("Digite a senha:") === pin) {
+                isAdmin = true;
+                document.getElementById('admin-panel').style.display = 'block';
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        }
+    };
 </script>
 </body>
 </html>
