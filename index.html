@@ -41,7 +41,6 @@
         .modal-content { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 380px; border-radius: 15px; padding: 25px; text-align: center; }
         .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         
-        #pix-status { font-size: 12px; margin-top: 10px; font-weight: bold; color: var(--gold); animation: pulse 1s infinite; }
         .pix-code-box { background: #000; color: var(--primary); padding: 10px; border-radius: 5px; font-size: 9px; word-break: break-all; margin-top: 10px; border: 1px dashed var(--primary); cursor: pointer; }
 
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -67,7 +66,7 @@
     <div class="status-banner">
         <div>
             <span id="user-tag" style="font-weight:900; color:var(--primary);">USUÁRIO</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Verificando conta...</span>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Verificando...</span>
         </div>
         <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
@@ -89,10 +88,11 @@
             <input type="text" id="new-player-name" placeholder="Nome do Jogador" style="flex:1; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
             <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
         </div>
-        <div id="admin-players-list"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:10px; font-weight:bold; border-radius:5px;">GERAR TABELA</button>
-            <button onclick="confirmReset()" style="background:#444; border:none; color:#fff; padding:10px; font-weight:bold; border-radius:5px;">LIMPAR TUDO</button>
+        <div id="admin-players-list" style="margin-bottom: 15px;"></div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">GERAR TABELA</button>
+            <button onclick="limparDadosGerais()" style="background:#ff0055; border:none; color:#fff; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">LIMPAR TUDO</button>
         </div>
         <button class="btn-adm" style="background:none; color:#555; margin-top:15px;" onclick="window.logout()">SAIR DA CONTA</button>
     </div>
@@ -101,26 +101,21 @@
 <div id="upgrade-modal" class="modal">
     <div class="modal-content" style="text-align: center;">
         <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
-        <p style="font-size: 12px; color:#aaa; margin-bottom: 20px;">Libere jogadores ilimitados e jogos de ida e volta.</p>
-
-        <div id="manual-pix" style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
-            <div style="font-size: 14px; font-weight: 900; color: var(--gold); margin-bottom: 10px;">PAGUE VIA PIX - R$ 29,90</div>
+        <p style="font-size: 11px; color:#aaa;">Ilimitado + Jogos de Ida e Volta</p>
+        
+        <div style="margin: 20px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
+            <div style="color: var(--gold); font-weight: 900; margin-bottom: 10px;">VALOR: R$ 29,90</div>
+            <i class="fas fa-qrcode" style="font-size: 60px; color: white; margin-bottom: 10px;"></i>
             
-            <div id="static-qrcode">
-                <i class="fas fa-qrcode" style="font-size: 80px; color: white; margin-bottom: 10px;"></i>
+            <div class="pix-code-box" id="pix-manual-code" onclick="copyManualPix()">
+                00020126430014br.gov.bcb.pix0121lukcoelhu@hotmail.com52040000530398654041.995802BR5912Lucas Coelho6009Sao Paulo62230519daqr4264446571991666304FB1C
             </div>
-
-            <div class="pix-code-box" id="pix-manual-code" onclick="copyManualPix()" 
-                 style="background: #000; color: var(--primary); padding: 12px; border: 1px dashed var(--primary); cursor: pointer; font-size: 10px; word-break: break-all;">
-                 00020126360014BR.GOV.BCB.PIX0114SUACHAVEAQUI250800005303986540529.905802BR5920NOME6009CIDADE62070503***6304ABCD
-            </div>
-            <p style="font-size: 9px; color: #777; margin-top: 8px;">Clique no código acima para copiar</p>
+            <p style="font-size: 9px; color: #777; margin-top: 5px;">Clique acima para copiar o Pix Copia e Cola</p>
         </div>
 
-        <button class="btn-adm" style="background: var(--pro); color: white; margin-top: 15px;" onclick="confirmarPagamento()">
-            <i class="fas fa-check-circle"></i> JÁ REALIZEI O PAGAMENTO
+        <button class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">
+            JÁ PAGUEI / LIBERAR CONTA
         </button>
-
         <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
     </div>
 </div>
@@ -152,8 +147,6 @@
         messagingSenderId: "718903184280",
         appId: "1:718903184280:web:b028397ff37450fd7cb9ed"
     };
-
-    const MP_ACCESS_TOKEN = "APP_USR-3179901722819957-011117-52492eab169a7314486cd84896da82ce-426444657";
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -187,107 +180,62 @@
         }
     });
 
-    window.logout = () => { if(confirm("Sair da conta?")) signOut(auth); };
+    window.logout = () => { if(confirm("Sair?")) signOut(auth); };
 
     document.getElementById('btn-login').onclick = async () => {
         const e = document.getElementById('auth-email').value;
         const p = document.getElementById('auth-pw').value;
         try { await signInWithEmailAndPassword(auth, e, p); } 
-        catch { try { await createUserWithEmailAndPassword(auth, e, p); } catch { alert("Erro no acesso."); } }
+        catch { try { await createUserWithEmailAndPassword(auth, e, p); } catch { alert("Erro."); } }
     };
 
-    // --- MERCADO PAGO ---
-    window.gerarPix = async () => {
-        const btn = document.getElementById('btn-generate-pix');
-        const loading = document.getElementById('pix-loading');
-        btn.style.display = 'none';
-        loading.style.display = 'block';
-
-        const paymentData = {
-            transaction_amount: 29.90,
-            description: `Upgrade PRO - ${currentUser.email}`,
-            payment_method_id: "pix",
-            payer: { email: currentUser.email, first_name: "Usuario" }
-        };
-
-        try {
-            const res = await fetch("https://cors-anywhere.herokuapp.com/https://api.mercadopago.com/v1/payments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MP_ACCESS_TOKEN}`, "X-Idempotency-Key": "key_" + Date.now() },
-                body: JSON.stringify(paymentData)
-            });
-            const data = await res.json();
-            if (data.point_of_interaction) {
-                const pixCode = data.point_of_interaction.transaction_data.qr_code;
-                const pixImg = data.point_of_interaction.transaction_data.qr_code_base64;
-                loading.style.display = 'none';
-                document.getElementById('pix-container').style.display = 'block';
-                document.getElementById('qrcode-img').innerHTML = `<img src="data:image/jpeg;base64,${pixImg}" style="width:180px; margin:10px auto; display:block;">`;
-                document.getElementById('pix-copy-code').setAttribute('data-code', pixCode);
-                checkStatus(data.id);
-            } else { alert("Erro na API."); loading.style.display = 'none'; btn.style.display = 'block'; }
-        } catch (e) { alert("Erro de conexão."); loading.style.display = 'none'; btn.style.display = 'block'; }
-    };
-
-    window.copyPix = () => {
-        const code = document.getElementById('pix-copy-code').getAttribute('data-code');
+    // --- FUNÇÕES DE PAGAMENTO ---
+    window.copyManualPix = () => {
+        const code = document.getElementById('pix-manual-code').innerText.trim();
         navigator.clipboard.writeText(code);
-        alert("Copia e Cola copiado!");
+        alert("Pix Copiado!");
     };
 
-    function checkStatus(id) {
-        const itv = setInterval(async () => {
-            const res = await fetch(`https://api.mercadopago.com/v1/payments/${id}`, {
-                headers: { "Authorization": `Bearer ${MP_ACCESS_TOKEN}` }
-            });
-            const data = await res.json();
-            if (data.status === 'approved') {
-                clearInterval(itv);
-                await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email });
-                location.reload();
-            }
-        }, 5000);
-    }
-
-    // --- COMPARTILHAMENTO ---
-    window.compartilharRodada = (titulo, partidas) => {
-        let texto = `🏆 *EFOOTBALL LEAGUE - ${titulo}*\n\n`;
-        partidas.forEach(m => {
-            const placar = m.status === 'done' ? `${m.g1} x ${m.g2}` : 'vs';
-            texto += `⚽ ${m.p1} ${placar} ${m.p2}\n`;
-        });
-        
-        if (navigator.share) {
-            navigator.share({ title: 'Resultado Rodada', text: texto });
-        } else {
-            navigator.clipboard.writeText(texto);
-            alert("Texto copiado para o WhatsApp!");
+    window.confirmarPagamento = async () => {
+        if(confirm("Confirma que enviou o PIX de R$ 29,90? Sua conta será ativada em instantes.")) {
+            // Aqui você pode enviar um e-mail pra você ou liberar automático para teste:
+            await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email });
+            alert("Sucesso! Recarregando...");
+            location.reload();
         }
     };
 
-    // --- SISTEMA DE SENHA ADM ---
+    // --- FUNÇÕES DA ENGRENAGEM (ADM) ---
     window.showAdminAuth = () => {
         const savedPIN = localStorage.getItem('admin_pin');
-        
         if (!savedPIN) {
-            const newPIN = prompt("PRIMEIRO ACESSO: Crie uma senha numérica para a engrenagem:");
-            if (newPIN && newPIN.length > 0) {
-                localStorage.setItem('admin_pin', newPIN);
-                alert("Senha criada! Clique na engrenagem novamente para entrar.");
-            }
+            const newPIN = prompt("PRIMEIRO ACESSO: Crie uma senha para este navegador:");
+            if (newPIN) { localStorage.setItem('admin_pin', newPIN); alert("Senha salva!"); }
         } else {
-            const inputPIN = prompt("Digite sua senha de acesso:");
+            const inputPIN = prompt("Digite a senha da engrenagem:");
             if (inputPIN === savedPIN) {
                 isAdmin = true;
                 document.getElementById('admin-panel').style.display = 'block';
                 window.scrollTo(0, document.body.scrollHeight);
-            } else if (inputPIN !== null) {
-                alert("Senha incorreta!");
-            }
+            } else { alert("Senha incorreta!"); }
         }
     };
 
-    // --- CORE DO SISTEMA ---
+    // --- LIMPEZA GERAL ---
+    window.limparDadosGerais = async () => {
+        if (!confirm("Isso apagará todas as partidas e zerará os pontos de todos os jogadores. Confirmar?")) return;
+        const batch = writeBatch(db);
+        // Deletar partidas
+        allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
+        // Zerar jogadores
+        globalPlayers.forEach(p => {
+            batch.update(doc(db, "jogadores", p.id), { pts: 0, v: 0, e: 0, d: 0, sg: 0 });
+        });
+        await batch.commit();
+        alert("Dados limpos!");
+    };
+
+    // --- CORE ---
     function initData() {
         onSnapshot(query(collection(db, "jogadores"), where("owner", "==", currentUser.uid)), (snap) => {
             globalPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -308,52 +256,55 @@
         document.getElementById("new-player-name").value = "";
     };
 
+    window.deletePlayer = async (id) => {
+        if (confirm("Remover este jogador?")) await deleteDoc(doc(db, "jogadores", id));
+    };
+
     function renderTable() {
         document.querySelector("#leaderboard tbody").innerHTML = globalPlayers.map((p, i) => `
             <tr><td>${i+1}º</td><td style="text-align:left; font-weight:700;">${p.nome}</td><td style="color:var(--primary)">${p.pts}</td><td>${p.v}</td><td>${p.e}</td><td>${p.d}</td><td>${p.sg}</td></tr>
         `).join('');
     }
 
+    function renderAdminPlayers() {
+        document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
+            <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #222; font-size:10px;">
+                <span>${p.nome}</span><i class="fas fa-trash" style="color:#ff0055;" onclick="deletePlayer('${p.id}')"></i>
+            </div>`).join('');
+    }
+
+    window.compartilharRodada = (titulo, partidas) => {
+        let txt = `🏆 *EFOOTBALL LEAGUE - ${titulo}*\n\n`;
+        partidas.forEach(m => {
+            const res = m.status === 'done' ? `${m.g1} x ${m.g2}` : 'vs';
+            txt += `⚽ ${m.p1} ${res} ${m.p2}\n`;
+        });
+        if (navigator.share) { navigator.share({ title: 'Tabela', text: txt }); }
+        else { navigator.clipboard.writeText(txt); alert("Texto copiado!"); }
+    };
+
     function renderMatches() {
+        const container = document.getElementById("results-by-round");
+        container.innerHTML = "";
         const groups = {};
         allMatches.forEach(m => {
             const k = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
             if (!groups[k]) groups[k] = [];
             groups[k].push(m);
         });
-        
-        const container = document.getElementById("results-by-round");
-        container.innerHTML = "";
-        
         Object.keys(groups).sort().forEach(k => {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'rodada-group';
-            
-            const label = document.createElement('div');
-            label.className = 'rodada-label';
-            label.innerHTML = `<span>${k}</span>`;
-            
-            const shareBtn = document.createElement('button');
-            shareBtn.className = 'btn-share';
-            shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
-            shareBtn.onclick = () => compartilharRodada(k, groups[k]);
-            
-            label.appendChild(shareBtn);
-            groupDiv.appendChild(label);
-            
+            const div = document.createElement('div');
+            div.className = 'rodada-group';
+            div.innerHTML = `<div class="rodada-label"><span>${k}</span> <i class="fas fa-share-alt" onclick='compartilharRodada("${k}", ${JSON.stringify(groups[k])})'></i></div>`;
             groups[k].forEach(m => {
-                const item = document.createElement('div');
-                item.className = 'match-item';
-                item.innerHTML = `
-                    <span style="font-size:10px; flex:1;">${m.p1}</span>
-                    <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScore('${m.id}')` : ''}">
-                        ${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}
-                    </span>
-                    <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
-                `;
-                groupDiv.appendChild(item);
+                div.innerHTML += `
+                    <div class="match-item">
+                        <span style="font-size:10px; flex:1;">${m.p1}</span>
+                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScore('${m.id}')` : ''}">${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}</span>
+                        <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
+                    </div>`;
             });
-            container.appendChild(groupDiv);
+            container.appendChild(div);
         });
     }
 
@@ -404,15 +355,7 @@
         await batch.commit();
     };
 
-    window.confirmReset = async () => { if(confirm("Resetar?")) { const b = writeBatch(db); allMatches.forEach(m => b.delete(doc(db,"partidas",m.id))); await b.commit(); }};
-    window.deletePlayer = async (id) => { if (confirm("Remover?")) await deleteDoc(doc(db, "jogadores", id)); };
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
-    function renderAdminPlayers() {
-        document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #222; font-size:10px;">
-                <span>${p.nome}</span><i class="fas fa-trash" style="color:red;" onclick="deletePlayer('${p.id}')"></i>
-            </div>`).join('');
-    }
 </script>
 </body>
 </html>
