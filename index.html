@@ -11,7 +11,6 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
         
-        /* Telas de Login */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: var(--card); border-radius: 20px; padding: 30px; width: 100%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         .auth-input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 12px; font-family: 'Montserrat'; }
@@ -23,7 +22,6 @@
         .status-banner { background: #1a1f26; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .btn-upgrade { background: var(--pro); color: white; padding: 8px 12px; border-radius: 6px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 10px; }
 
-        /* Tabela e Jogos */
         .leaderboard-card { background: var(--card); border-radius: 12px; padding: 10px; margin-bottom: 20px; border: 1px solid var(--border); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 380px; }
         th { color: #666; padding: 10px 5px; text-transform: uppercase; font-size: 9px; text-align: center; border-bottom: 1px solid var(--border); }
@@ -51,17 +49,11 @@
 <div id="auth-screen">
     <div class="auth-card">
         <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 10px;">EFOOTBALL LEAGUE</div>
-        <p id="auth-msg" style="font-size: 10px; color: #ffaa00; margin-bottom: 15px;">Acesse sua conta para gerenciar</p>
-        
+        <p id="auth-status" style="font-size: 10px; color: #777; margin-bottom: 15px;">Aguardando e-mail e senha...</p>
         <input type="email" id="auth-email" class="auth-input" placeholder="E-mail">
         <input type="password" id="auth-pw" class="auth-input" placeholder="Senha">
-        
         <button id="btn-login" class="btn-adm" style="background: var(--primary); color:#000;">ENTRAR</button>
-        <button id="btn-register" class="btn-adm" style="background: #333; color:#fff;">CRIAR NOVA CONTA</button>
-        
-        <div style="margin-top: 20px;">
-            <a href="javascript:void(0)" onclick="resetarSenha()" style="color: #666; font-size: 10px; text-decoration: none;">Esqueci minha senha</a>
-        </div>
+        <button id="btn-create" class="btn-adm" style="background: #222; color:#fff; border: 1px solid #333;">CRIAR CONTA</button>
     </div>
 </div>
 
@@ -73,8 +65,8 @@
 <div class="container">
     <div class="status-banner">
         <div>
-            <span id="user-tag" style="font-weight:900; color:var(--primary);">USUÁRIO</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Sincronizando...</span>
+            <span id="user-tag" style="font-weight:900; color:var(--primary);">CARREGANDO...</span><br>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Sincronizando dados...</span>
         </div>
         <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
@@ -91,20 +83,17 @@
     <div id="results-by-round" class="results-scroll-container"></div>
 
     <div id="admin-panel" class="leaderboard-card" style="display:none; border: 1px solid var(--primary); margin-top:20px;">
-        <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">ADMINISTRAÇÃO DA LIGA</h4>
-        
+        <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">ADMINISTRAÇÃO</h4>
         <div style="display: flex; gap: 5px; margin-bottom: 15px;">
             <input type="text" id="new-player-name" placeholder="Nome do Jogador" style="flex:1; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
             <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
         </div>
-
-        <div id="admin-players-list" style="margin-bottom: 20px; background: rgba(0,0,0,0.3); border-radius: 8px;"></div>
-        
+        <div id="admin-players-list" style="margin-bottom: 20px;"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">GERAR JOGOS</button>
+            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">GERAR TABELA</button>
             <button onclick="limparDadosGerais()" style="background:#ff0055; border:none; color:#fff; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">LIMPAR TUDO</button>
         </div>
-        <button class="btn-adm" style="background:none; color:#555; margin-top:20px;" onclick="window.logout()">SAIR DO SISTEMA</button>
+        <button class="btn-adm" style="background:none; color:#555; margin-top:15px;" onclick="window.logout()">SAIR DA CONTA</button>
     </div>
 </div>
 
@@ -119,7 +108,7 @@
             </div>
             <p style="font-size: 9px; color: #777; margin-top: 5px;">Toque no código para copiar</p>
         </div>
-        <button class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">JÁ PAGUEI / ATIVAR PRO</button>
+        <button id="btn-confirm-pay" class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">JÁ PAGUEI / ATIVAR PRO</button>
         <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
     </div>
 </div>
@@ -128,11 +117,11 @@
     <div class="modal-content">
         <div id="modal-p1" style="font-weight:900;"></div>
         <div style="display:flex; justify-content:center; gap:10px; margin:15px 0;">
-            <input type="number" id="input-g1" placeholder="0" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
-            <input type="number" id="input-g2" placeholder="0" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
+            <input type="number" id="input-g1" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
+            <input type="number" id="input-g2" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
         </div>
         <div id="modal-p2" style="font-weight:900;"></div>
-        <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR RESULTADO</button>
+        <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR PLACAR</button>
     </div>
 </div>
 
@@ -141,7 +130,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, where, getDoc, setDoc, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBeJNb65kjFuC-qvbmvnNpBYZNcCG7Zjwg",
@@ -156,6 +145,9 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    // Configura persistência local (não desloga ao fechar)
+    setPersistence(auth, browserLocalPersistence);
+
     let currentUser = null;
     let isPro = false;
     let isAdmin = false;
@@ -163,7 +155,7 @@
     let allMatches = [];
     let currentMatchId = null;
 
-    // --- MONITOR DE AUTENTICAÇÃO ---
+    // --- MONITOR DE USUÁRIO ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
@@ -176,7 +168,7 @@
                 document.getElementById('btn-upgrade-top').style.display = 'none';
             } else {
                 isPro = false;
-                document.getElementById('limit-info').innerText = "PLANO GRÁTIS (MÁX 4 JOGADORES)";
+                document.getElementById('limit-info').innerText = "PLANO GRÁTIS (MÁX 4)";
             }
             
             document.getElementById('auth-screen').style.display = 'none';
@@ -187,84 +179,72 @@
         }
     });
 
-    // --- BOTÕES DE LOGIN E CADASTRO ---
+    // --- LOGIN / CADASTRO ---
     document.getElementById('btn-login').onclick = async () => {
-        const email = document.getElementById('auth-email').value.trim();
-        const pass = document.getElementById('auth-pw').value;
-        const msg = document.getElementById('auth-msg');
-        if(!email || !pass) return alert("Preencha e-mail e senha.");
-
-        try {
-            msg.innerText = "Verificando dados...";
-            await signInWithEmailAndPassword(auth, email, pass);
-        } catch (e) {
-            console.error(e);
-            msg.innerText = "Erro: Senha incorreta ou usuário não encontrado.";
-        }
-    };
-
-    document.getElementById('btn-register').onclick = async () => {
-        const email = document.getElementById('auth-email').value.trim();
-        const pass = document.getElementById('auth-pw').value;
-        const msg = document.getElementById('auth-msg');
-        if(!email || pass.length < 6) return alert("E-mail válido e senha de 6 dígitos são necessários.");
-
-        try {
-            msg.innerText = "Criando sua conta...";
-            await createUserWithEmailAndPassword(auth, email, pass);
-        } catch (e) {
-            msg.innerText = "Erro: Este e-mail já está sendo usado.";
-        }
-    };
-
-    window.resetarSenha = () => {
         const email = document.getElementById('auth-email').value;
-        if(!email) return alert("Digite seu e-mail no campo acima primeiro.");
-        sendPasswordResetEmail(auth, email).then(() => alert("E-mail de recuperação enviado!")).catch(() => alert("Erro ao enviar e-mail."));
+        const pass = document.getElementById('auth-pw').value;
+        const status = document.getElementById('auth-status');
+        try {
+            status.innerText = "Verificando...";
+            await signInWithEmailAndPassword(auth, email, pass);
+        } catch (e) { status.innerText = "Erro: Senha ou E-mail incorretos."; }
     };
 
-    window.logout = () => signOut(auth).then(() => location.reload());
+    document.getElementById('btn-create').onclick = async () => {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-pw').value;
+        const status = document.getElementById('auth-status');
+        try {
+            status.innerText = "Criando...";
+            await createUserWithEmailAndPassword(auth, email, pass);
+        } catch (e) { status.innerText = "Erro: E-mail inválido ou já existe."; }
+    };
 
-    // --- FUNÇÕES DE PAGAMENTO ---
+    window.logout = () => { if(confirm("Sair?")) signOut(auth).then(() => location.reload()); };
+
+    // --- PAGAMENTO (CORRIGIDO) ---
     window.confirmarPagamento = async () => {
-        if(confirm("Confirma que enviou o PIX? Sua conta PRO será liberada agora.")) {
-            await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email }, { merge: true });
-            alert("Sucesso! Sua conta agora é PRO.");
-            location.reload();
+        const btn = document.getElementById('btn-confirm-pay');
+        if(confirm("Confirma o pagamento PIX? Seu plano PRO será ativado agora.")) {
+            btn.disabled = true;
+            btn.innerText = "ATIVANDO... AGUARDE";
+            try {
+                // Salva no banco e espera a resposta do servidor
+                await setDoc(doc(db, "usuarios", currentUser.uid), { 
+                    plan: "pro", 
+                    email: currentUser.email,
+                    updatedAt: new Date()
+                }, { merge: true });
+                
+                alert("CONTA PRO ATIVADA COM SUCESSO!");
+                // Recarrega apenas após ter certeza que salvou
+                window.location.reload(); 
+            } catch (e) {
+                alert("Erro ao ativar. Verifique sua internet.");
+                btn.disabled = false;
+                btn.innerText = "JÁ PAGUEI / ATIVAR PRO";
+            }
         }
     };
 
     window.copyManualPix = () => {
-        const code = document.getElementById('pix-manual-code').innerText.trim();
-        navigator.clipboard.writeText(code).then(() => alert("Código Pix Copiado!"));
+        navigator.clipboard.writeText(document.getElementById('pix-manual-code').innerText.trim());
+        alert("Copiado!");
     };
 
-    // --- ADMINISTRAÇÃO ---
+    // --- ADMIN ---
     window.showAdminAuth = () => {
         const saved = localStorage.getItem('admin_pin');
         if(!saved) {
-            const novo = prompt("Crie uma senha para a engrenagem:");
-            if(novo) localStorage.setItem('admin_pin', novo);
+            const p = prompt("Crie uma senha para a engrenagem:");
+            if(p) localStorage.setItem('admin_pin', p);
         } else {
-            if(prompt("Senha da engrenagem:") === saved) {
+            if(prompt("Senha:") === saved) {
                 isAdmin = true;
                 document.getElementById('admin-panel').style.display = 'block';
                 window.scrollTo(0, document.body.scrollHeight);
-            } else alert("Senha incorreta.");
+            }
         }
-    };
-
-    window.limparDadosGerais = async () => {
-        if(!confirm("Deseja ZERAR a tabela e apagar todos os jogos?")) return;
-        const batch = writeBatch(db);
-        allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
-        globalPlayers.forEach(p => batch.update(doc(db, "jogadores", p.id), { pts:0, v:0, e:0, d:0, sg:0 }));
-        await batch.commit();
-        alert("Liga reiniciada!");
-    };
-
-    window.deletePlayer = async (id) => {
-        if(confirm("Excluir este jogador?")) await deleteDoc(doc(db, "jogadores", id));
     };
 
     window.editPlayer = async (id, antigo) => {
@@ -272,7 +252,19 @@
         if(novo && novo !== antigo) await updateDoc(doc(db, "jogadores", id), { nome: novo });
     };
 
-    // --- ENGINE PRINCIPAL ---
+    window.deletePlayer = async (id) => {
+        if(confirm("Excluir?")) await deleteDoc(doc(db, "jogadores", id));
+    };
+
+    window.limparDadosGerais = async () => {
+        if(!confirm("Zerar tudo?")) return;
+        const batch = writeBatch(db);
+        allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
+        globalPlayers.forEach(p => batch.update(doc(db, "jogadores", p.id), { pts:0, v:0, e:0, d:0, sg:0 }));
+        await batch.commit();
+    };
+
+    // --- CORE ---
     function initData() {
         onSnapshot(query(collection(db, "jogadores"), where("owner", "==", currentUser.uid)), (snap) => {
             globalPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -348,7 +340,6 @@
         const g2 = parseInt(document.getElementById('input-g2').value) || 0;
         await updateDoc(doc(db, "partidas", currentMatchId), { g1, g2, status: 'done' });
         document.getElementById('score-modal').style.display = 'none';
-        
         const batch = writeBatch(db);
         globalPlayers.forEach(p => {
             let s = { pts: 0, v: 0, e: 0, d: 0, sg: 0 };
@@ -368,7 +359,7 @@
         const batch = writeBatch(db);
         allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
         let p = [...globalPlayers];
-        if (p.length < 2) return alert("Adicione no mínimo 2 jogadores.");
+        if (p.length < 2) return;
         if (p.length % 2 !== 0) p.push({ nome: "FOLGA", id: "bye" });
         for (let r = 0; r < p.length - 1; r++) {
             for (let i = 0; i < p.length / 2; i++) {
@@ -381,7 +372,6 @@
             p.splice(1, 0, p.pop());
         }
         await batch.commit();
-        alert("Torneio gerado!");
     };
 
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
