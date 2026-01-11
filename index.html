@@ -99,11 +99,20 @@
         <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
             <div style="color: var(--gold); font-weight: 900; margin-bottom: 10px;">VALOR: R$ 29,90</div>
+            
+            <p style="font-size: 10px; color: #aaa;">1. Copie o PIX abaixo e pague:</p>
             <div class="pix-code-box" id="pix-manual-code" onclick="copyManualPix()">
                 00020126430014br.gov.bcb.pix0121lukcoelhu@hotmail.com52040000530398654041.995802BR5912Lucas Coelho6009Sao Paulo62230519daqr4264446571991666304FB1C
             </div>
-            <p style="font-size: 9px; color: #777;">Após o PIX, peça sua chave e cole abaixo:</p>
+
+            <p style="font-size: 10px; color: #aaa; margin-top:15px;">2. Após pagar, envie o comprovante:</p>
+            <button onclick="enviarComprovanteZap()" class="btn-adm" style="background: #25D366; color: #fff; margin-bottom: 20px;">
+                <i class="fab fa-whatsapp"></i> ENVIAR COMPROVANTE
+            </button>
+
+            <hr style="border:0; border-top:1px solid #333; margin: 20px 0;">
             
+            <p style="font-size: 10px; color: #aaa;">3. Cole a chave que recebeu abaixo:</p>
             <input type="text" id="input-cupom" placeholder="Cole sua chave aqui" class="auth-input" style="margin-top:10px; border-color:var(--pro); text-align:center;">
             <button id="btn-validar-cupom" class="btn-adm" style="background: var(--pro); color: #fff; margin-top:0;" onclick="ativarComCupom()">ATIVAR COM CHAVE PRO</button>
         </div>
