@@ -11,15 +11,17 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
         
-        /* AUTH & MODALS */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: var(--card); border-radius: 20px; padding: 30px; width: 100%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         .auth-input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 12px; font-family: 'Montserrat'; }
         
-        header { text-align: center; padding: 20px 0; background: #000; border-bottom: 2px solid var(--primary); }
-        .live-badge { background: #ff0000; font-size: 10px; padding: 2px 8px; border-radius: 4px; color: white; animation: pulse 1.5s infinite; }
+        header { text-align: center; padding: 15px 0; background: #000; border-bottom: 2px solid var(--primary); position: relative; }
+        .btn-logout-top { position: absolute; right: 15px; top: 18px; background: none; border: 1px solid #333; color: #777; padding: 5px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; }
         
         .container { max-width: 800px; margin: auto; padding: 12px; }
+        .welcome-msg { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .welcome-msg span { color: var(--primary); }
+
         .status-banner { background: #1a1f26; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .btn-upgrade { background: var(--pro); color: white; padding: 8px 12px; border-radius: 6px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 10px; }
 
@@ -29,9 +31,12 @@
         td { padding: 12px 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
         .results-scroll-container { display: flex; overflow-x: auto; gap: 15px; padding: 5px 5px 15px; scrollbar-width: none; }
-        .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; }
+        .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; position: relative; }
         .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; }
         
+        /* Botão de Compartilhar (Desabilitado) */
+        .btn-share-round { position: absolute; right: 10px; top: 8px; font-size: 12px; color: #444; cursor: not-allowed; pointer-events: none; }
+
         .match-item { display: flex; align-items: center; justify-content: space-between; background: #000; margin-bottom: 6px; padding: 8px 12px; border-radius: 6px; border: 1px solid #1a1f26; }
         .match-item .p-score { background: var(--primary); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 4px; min-width: 45px; text-align: center; cursor: pointer; }
         .match-item .p-score.open { background: #333; color: #777; font-size: 9px; }
@@ -40,9 +45,6 @@
         .modal-content { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 380px; border-radius: 15px; padding: 25px; text-align: center; }
         .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         
-        #pix-status { font-size: 12px; margin-top: 10px; font-weight: bold; color: var(--gold); animation: pulse 1s infinite; }
-        .pix-code-box { background: #000; color: var(--primary); padding: 10px; border-radius: 5px; font-size: 9px; word-break: break-all; margin-top: 10px; border: 1px dashed var(--primary); cursor: pointer; }
-
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
@@ -59,14 +61,15 @@
 
 <header>
     <div style="font-size: 18px; font-weight: 900;">EFOOTBALL <span style="color:var(--primary)">CAMPEONATO</span></div>
-    <span class="live-badge">● SISTEMA AUTOMÁTICO</span>
+    <button class="btn-logout-top" onclick="logout()"><i class="fas fa-sign-out-alt"></i> SAIR</button>
 </header>
 
 <div class="container">
+    <div class="welcome-msg" id="welcome-text">Olá, <span>Carregando...</span></div>
+
     <div class="status-banner">
         <div>
-            <span id="user-tag" style="font-weight:900; color:var(--primary);">USUÁRIO</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Verificando conta...</span>
+            <span id="limit-info" style="font-size:10px; font-weight:bold;">Verificando plano...</span>
         </div>
         <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
@@ -80,45 +83,33 @@
         </table>
     </div>
 
-    <div style="font-size: 12px; font-weight: 900; color: var(--primary); margin: 20px 0 10px; text-transform: uppercase;">Rodadas do Torneio</div>
     <div id="results-by-round" class="results-scroll-container"></div>
 
     <div id="admin-panel" class="leaderboard-card" style="display:none; border: 1px solid var(--primary); margin-top:20px;">
-        <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">PAINEL DO ORGANIZADOR</h4>
+        <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">GERENCIAR CAMPEONATO</h4>
         <div style="display: flex; gap: 5px; margin-bottom: 10px;">
             <input type="text" id="new-player-name" placeholder="Nome do Jogador" style="flex:1; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
             <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
         </div>
         <div id="admin-players-list"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
-            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:10px; font-weight:bold; border-radius:5px;">GERAR TABELA</button>
-            <button onclick="confirmReset()" style="background:#444; border:none; color:#fff; padding:10px; font-weight:bold; border-radius:5px;">LIMPAR TUDO</button>
+            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:10px; font-weight:bold; border-radius:5px;">SORTEAR TABELA</button>
+            <button onclick="confirmReset()" style="background:#444; border:none; color:#fff; padding:10px; font-weight:bold; border-radius:5px;">RESETAR</button>
         </div>
-        <button class="btn-adm" style="background:none; color:#555; margin-top:15px;" onclick="signOut(auth)">SAIR DA CONTA</button>
     </div>
 </div>
 
 <div id="upgrade-modal" class="modal">
-    <div class="modal-content" style="text-align: left;">
-        <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
-        <div style="font-size: 11px; line-height: 1.6; margin-bottom: 15px;">
-            ✅ Jogadores Ilimitados<br>
-            ✅ Jogos de Volta Liberados<br>
-            ✅ Atualização Automática de Tabela
-        </div>
-
-        <div id="pay-area" style="text-align: center;">
-            <div id="pix-loading" style="display:none;">Gerando Pix...</div>
-            <button id="btn-generate-pix" class="btn-adm" style="background: var(--primary); color: #000;" onclick="gerarPix()">PAGAR R$ 29,90 VIA PIX</button>
-            
-            <div id="pix-container" style="display:none;">
-                <div id="qrcode-img"></div>
-                <div id="pix-status">Aguardando Pagamento...</div>
-                <div class="pix-code-box" id="pix-copy-code" onclick="copyPix()">Clique para copiar o código Pix</div>
-                <p style="font-size: 9px; color: #777; margin-top: 10px;">O sistema libera sua conta na hora após o pagamento!</p>
-            </div>
-        </div>
-        <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">FECHAR</button>
+    <div class="modal-content">
+        <h2 style="color: var(--pro); font-size: 18px;">LIBERAR ACESSO PRO ⚡</h2>
+        <p style="font-size: 11px; color:#aaa; margin-bottom: 15px;">
+            Pague via PIX e cole o ID abaixo para ativar:<br>
+            <b style="color:white; font-size:13px;">CHAVE PIX: 2cc37828-79bc-4626-b251-ae7fb87bf057</b>
+        </p>
+        <input type="text" id="input-pix-id" placeholder="ID da Transação" 
+            style="width: 100%; padding: 14px; background: #000; border: 2px solid var(--pro); color: #fff; border-radius: 8px; margin-bottom: 10px; text-align: center;">
+        <button id="btn-validar" class="btn-adm" style="background: var(--pro); color: white;" onclick="validarPixManual()">VALIDAR AGORA</button>
+        <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
     </div>
 </div>
 
@@ -129,12 +120,12 @@
             <input type="number" id="input-g1" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
             <input type="number" id="input-g2" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
         </div>
-        <div id="modal-p2" style="font-weight:900; margin-bottom:15px;"></div>
+        <div id="modal-p2" style="font-weight:900;"></div>
         <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR</button>
     </div>
 </div>
 
-<button class="btn-config" style="position:fixed; bottom:20px; right:20px; opacity:0.2;" onclick="showAdminAuth()"><i class="fas fa-cog"></i></button>
+<button style="position:fixed; bottom:20px; right:20px; opacity:0.1; background:none; border:none; color:white;" onclick="showAdminAuth()"><i class="fas fa-cog"></i></button>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
@@ -150,7 +141,7 @@
         appId: "1:718903184280:web:b028397ff37450fd7cb9ed"
     };
 
-    const MP_ACCESS_TOKEN = "APP_USR-848a73d1-ffaf-422e-b425-ea66ee235879"; // <--- COLE SEU TOKEN AQUI
+    const MP_ACCESS_TOKEN = "APP_USR-848a73d1-ffaf-422e-b425-ea66ee235879"; 
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -169,27 +160,41 @@
             const userRef = doc(db, "usuarios", user.uid);
             const userSnap = await getDoc(userRef);
             
+            // Lógica de Saudação e Plano
+            const userName = user.email.split('@')[0].toUpperCase();
+            document.getElementById('welcome-text').innerHTML = `Olá, <span>${userName}</span>`;
+            
             if (userSnap.exists() && userSnap.data().plan === "pro") {
                 isPro = true;
-                document.getElementById('limit-info').innerText = "PLANO PROFISSIONAL ⚡";
+                document.getElementById('limit-info').innerHTML = "<i class='fas fa-crown' style='color:var(--gold)'></i> PLANO PROFISSIONAL";
                 document.getElementById('btn-upgrade-top').style.display = 'none';
             } else {
                 isPro = false;
-                document.getElementById('limit-info').innerText = "PLANO GRÁTIS (LIMITE 4)";
+                document.getElementById('limit-info').innerText = "PLANO GRÁTIS (MÁX 4)";
             }
             document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('user-tag').innerText = user.email.split('@')[0].toUpperCase();
             initData();
         } else {
             document.getElementById('auth-screen').style.display = 'flex';
         }
     });
 
-    document.getElementById('btn-login').onclick = async () => {
-        const e = document.getElementById('auth-email').value;
-        const p = document.getElementById('auth-pw').value;
-        try { await signInWithEmailAndPassword(auth, e, p); } 
-        catch { try { await createUserWithEmailAndPassword(auth, e, p); } catch { alert("Erro ao entrar."); } }
+    window.logout = () => { if(confirm("Deseja sair da conta?")) signOut(auth); };
+
+    window.validarPixManual = async () => {
+        const pixId = document.getElementById('input-pix-id').value.trim();
+        if(!pixId) return alert("Cole o ID!");
+        try {
+            const res = await fetch(`https://api.mercadopago.com/v1/payments/${pixId}`, {
+                headers: { "Authorization": `Bearer ${MP_ACCESS_TOKEN}` }
+            });
+            const data = await res.json();
+            if (data.status === 'approved') {
+                await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email });
+                alert("PRO ATIVADO!");
+                location.reload();
+            } else { alert("Pagamento não aprovado."); }
+        } catch (e) { alert("Erro ao validar."); }
     };
 
     function initData() {
@@ -209,63 +214,31 @@
         });
     }
 
-    // --- LOGICA MERCADO PAGO ---
-    window.gerarPix = async () => {
-        document.getElementById('btn-generate-pix').style.display = 'none';
-        document.getElementById('pix-loading').style.display = 'block';
+    function renderResultsByRound() {
+        const container = document.getElementById("results-by-round");
+        const groups = {};
+        allMatches.forEach(m => {
+            const key = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
+            if (!groups[key]) groups[key] = { games: [] };
+            groups[key].games.push(m);
+        });
 
-        const paymentData = {
-            transaction_amount: 29.90,
-            description: `Upgrade PRO - ${currentUser.email}`,
-            payment_method_id: "pix",
-            payer: { email: currentUser.email }
-        };
-
-        try {
-            const res = await fetch("https://api.mercadopago.com/v1/payments", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MP_ACCESS_TOKEN}` },
-                body: JSON.stringify(paymentData)
-            });
-            const data = await res.json();
-            const pixCode = data.point_of_interaction.transaction_data.qr_code;
-            const pixImg = data.point_of_interaction.transaction_data.qr_code_base64;
-
-            document.getElementById('pix-loading').style.display = 'none';
-            document.getElementById('pix-container').style.display = 'block';
-            document.getElementById('qrcode-img').innerHTML = `<img src="data:image/jpeg;base64,${pixImg}" style="width:180px">`;
-            document.getElementById('pix-copy-code').setAttribute('data-code', pixCode);
-
-            checkPaymentStatus(data.id);
-        } catch (e) { alert("Erro ao gerar Pix."); }
-    };
-
-    window.copyPix = () => {
-        const code = document.getElementById('pix-copy-code').getAttribute('data-code');
-        navigator.clipboard.writeText(code);
-        alert("Código Pix Copiado!");
-    };
-
-    function checkPaymentStatus(id) {
-        const timer = setInterval(async () => {
-            const res = await fetch(`https://api.mercadopago.com/v1/payments/${id}`, {
-                headers: { "Authorization": `Bearer ${MP_ACCESS_TOKEN}` }
-            });
-            const data = await res.json();
-            if (data.status === 'approved') {
-                clearInterval(timer);
-                ativarProAutomatico();
-            }
-        }, 5000);
+        container.innerHTML = Object.keys(groups).sort().map(key => `
+            <div class="rodada-group">
+                <i class="fas fa-share-alt btn-share-round" title="Compartilhar (PRO)"></i>
+                <div class="rodada-label">${key}</div>
+                ${groups[key].games.map(m => `
+                    <div class="match-item">
+                        <span style="font-size:11px; flex:1;">${m.p1}</span>
+                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScoreModal('${m.id}')` : ''}">
+                            ${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}
+                        </span>
+                        <span style="font-size:11px; flex:1; text-align:right;">${m.p2}</span>
+                    </div>`).join('')}
+            </div>`).join('');
     }
 
-    async function ativarProAutomatico() {
-        await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email });
-        document.getElementById('pix-container').innerHTML = "<h3 style='color:var(--primary)'>PAGAMENTO APROVADO! RECARREGANDO...</h3>";
-        setTimeout(() => location.reload(), 3000);
-    }
-
-    // --- REGRAS DE NEGOCIO ---
+    // Funções Admin padrão
     window.addPlayer = async () => {
         if (!isPro && globalPlayers.length >= 4) return openUpgradeModal();
         const n = document.getElementById("new-player-name").value;
@@ -273,54 +246,9 @@
         document.getElementById("new-player-name").value = "";
     };
 
-    function renderResultsByRound() {
-        const container = document.getElementById("results-by-round");
-        const groups = {};
-        allMatches.forEach(m => {
-            const key = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
-            if (!groups[key]) groups[key] = { turno: m.turno, games: [] };
-            groups[key].games.push(m);
-        });
-
-        container.innerHTML = Object.keys(groups).map(key => {
-            const g = groups[key];
-            if (g.turno === 2 && !isPro) {
-                return `<div class="rodada-group" style="border:1px dashed var(--pro); opacity:0.6; text-align:center;">
-                    <div class="rodada-label" style="color:var(--pro)">TURNO DE VOLTA BLOQUEADO</div>
-                    <button class="btn-upgrade" onclick="openUpgradeModal()">LIBERAR PRO</button>
-                </div>`;
-            }
-            return `<div class="rodada-group">
-                <div class="rodada-label">${key}</div>
-                ${g.games.map(m => `
-                    <div class="match-item">
-                        <span style="font-size:10px; flex:1;">${m.p1}</span>
-                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScoreModal('${m.id}')` : ''}">
-                            ${m.status === 'done' ? `${m.g1}-${m.g2}` : 'VS'}
-                        </span>
-                        <span style="font-size:10px; flex:1; text-align:right;">${m.p2}</span>
-                    </div>`).join('')}
-            </div>`;
-        }).join('');
-    }
-
-    // --- ADMIN ---
-    window.showAdminAuth = () => {
-        const p = prompt("PIN ADMIN:");
-        if (p === "9498") { isAdmin = true; document.getElementById('admin-panel').style.display = 'block'; renderResultsByRound(); }
-    };
-
-    window.openScoreModal = (id) => {
-        currentMatchId = id;
-        const m = allMatches.find(x => x.id === id);
-        document.getElementById('modal-p1').innerText = m.p1;
-        document.getElementById('modal-p2').innerText = m.p2;
-        document.getElementById('score-modal').style.display = 'flex';
-    };
-
     window.saveScore = async () => {
-        const g1 = parseInt(document.getElementById('input-g1').value);
-        const g2 = parseInt(document.getElementById('input-g2').value);
+        const g1 = parseInt(document.getElementById('input-g1').value) || 0;
+        const g2 = parseInt(document.getElementById('input-g2').value) || 0;
         await updateDoc(doc(db, "partidas", currentMatchId), { g1, g2, status: 'done' });
         document.getElementById('score-modal').style.display = 'none';
         recalculateTable();
@@ -354,7 +282,7 @@
                 const p1 = p[i], p2 = p[p.length - 1 - i];
                 if (p1.id !== "bye" && p2.id !== "bye") {
                     batch.set(doc(collection(db, "partidas")), { p1: p1.nome, p2: p2.nome, g1: 0, g2: 0, status: 'open', turno: 1, rodada: r + 1, owner: currentUser.uid });
-                    batch.set(doc(collection(db, "partidas")), { p1: p2.nome, p2: p1.nome, g1: 0, g2: 0, status: 'open', turno: 2, rodada: r + 1, owner: currentUser.uid });
+                    if(isPro) batch.set(doc(collection(db, "partidas")), { p1: p2.nome, p2: p1.nome, g1: 0, g2: 0, status: 'open', turno: 2, rodada: r + 1, owner: currentUser.uid });
                 }
             }
             p.splice(1, 0, p.pop());
@@ -370,14 +298,22 @@
 
     window.updateAdminList = () => {
         document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #222; font-size:10px;">
-                <span>${p.nome}</span><i class="fas fa-trash" style="color:red;" onclick="deletePlayer('${p.id}')"></i>
+            <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #222; font-size:11px;">
+                <span>${p.nome}</span><i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="deletePlayer('${p.id}')"></i>
             </div>`).join('');
     };
 
+    window.showAdminAuth = () => { if (prompt("PIN ADMIN:") === "9498") { isAdmin = true; document.getElementById('admin-panel').style.display = 'block'; renderResultsByRound(); }};
+    window.openScoreModal = (id) => { currentMatchId = id; const m = allMatches.find(x => x.id === id); document.getElementById('modal-p1').innerText = m.p1; document.getElementById('modal-p2').innerText = m.p2; document.getElementById('score-modal').style.display = 'flex'; };
     window.deletePlayer = async (id) => { if (confirm("Excluir?")) await deleteDoc(doc(db, "jogadores", id)); };
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
     window.confirmReset = async () => { if(confirm("Limpar tudo?")) { const b = writeBatch(db); allMatches.forEach(m => b.delete(doc(db,"partidas",m.id))); await b.commit(); }};
+    document.getElementById('btn-login').onclick = async () => {
+        const e = document.getElementById('auth-email').value;
+        const p = document.getElementById('auth-pw').value;
+        try { await signInWithEmailAndPassword(auth, e, p); } 
+        catch { try { await createUserWithEmailAndPassword(auth, e, p); } catch { alert("Dados inválidos."); } }
+    };
 
 </script>
 </body>
