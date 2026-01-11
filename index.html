@@ -147,7 +147,7 @@
         messagingSenderId: "718903184280",
         appId: "1:718903184280:web:b028397ff37450fd7cb9ed"
     };
-
+    
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
@@ -159,6 +159,14 @@
     let globalPlayers = [];
     let allMatches = [];
     let currentMatchId = null;
+
+        window.enviarComprovanteZap = () => {
+        const telefone = "55119XXXXXXXX"; // COLOQUE SEU WHATSAPP AQUI (DDI + DDD + NUMERO)
+        const emailUsuario = currentUser ? currentUser.email : "Não identificado";
+        const texto = `Olá! Acabei de fazer o PIX para o Plano PRO. %0A%0A📧 Minha conta: *${emailUsuario}*%0A%0A_Aguardando minha chave de ativação!_`;
+    
+        window.open(`https://wa.me/${telefone}?text=${texto}`, '_blank');
+    };
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -178,6 +186,7 @@
         } else {
             document.getElementById('auth-screen').style.display = 'flex';
         }
+        
     });
 
     // SISTEMA DE CUPOM (PROTEÇÃO ANTI-FRAUDE)
