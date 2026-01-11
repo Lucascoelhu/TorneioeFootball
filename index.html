@@ -31,8 +31,6 @@
         .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; position: relative; }
         .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
         
-        .btn-share { background: none; border: none; color: var(--primary); cursor: pointer; font-size: 14px; }
-        
         .match-item { display: flex; align-items: center; justify-content: space-between; background: #000; margin-bottom: 6px; padding: 8px 12px; border-radius: 6px; border: 1px solid #1a1f26; }
         .match-item .p-score { background: var(--primary); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 4px; min-width: 45px; text-align: center; cursor: pointer; }
         .match-item .p-score.open { background: #333; color: #777; font-size: 9px; }
@@ -53,7 +51,8 @@
         <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 10px;">EFOOTBALL LEAGUE</div>
         <input type="email" id="auth-email" class="auth-input" placeholder="E-mail">
         <input type="password" id="auth-pw" class="auth-input" placeholder="Senha">
-        <button id="btn-login" class="btn-adm" style="background: var(--primary); color:#000;">ENTRAR / CADASTRAR</button>
+        <button id="btn-login" class="btn-adm" style="background: var(--primary); color:#000;">ENTRAR OU CADASTRAR</button>
+        <p id="auth-msg" style="font-size: 10px; color: #777; margin-top: 10px;">Aguardando dados...</p>
     </div>
 </div>
 
@@ -66,7 +65,7 @@
     <div class="status-banner">
         <div>
             <span id="user-tag" style="font-weight:900; color:var(--primary);">USUÁRIO</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Verificando...</span>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Carregando...</span>
         </div>
         <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
@@ -88,7 +87,8 @@
             <input type="text" id="new-player-name" placeholder="Nome do Jogador" style="flex:1; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
             <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
         </div>
-        <div id="admin-players-list" style="margin-bottom: 15px;"></div>
+        
+        <div id="admin-players-list" style="margin-bottom: 15px; background: #000; border-radius: 8px; padding: 5px;"></div>
         
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
             <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">GERAR TABELA</button>
@@ -99,23 +99,18 @@
 </div>
 
 <div id="upgrade-modal" class="modal">
-    <div class="modal-content" style="text-align: center;">
+    <div class="modal-content">
         <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
         <p style="font-size: 11px; color:#aaa;">Ilimitado + Jogos de Ida e Volta</p>
-        
         <div style="margin: 20px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
             <div style="color: var(--gold); font-weight: 900; margin-bottom: 10px;">VALOR: R$ 29,90</div>
             <i class="fas fa-qrcode" style="font-size: 60px; color: white; margin-bottom: 10px;"></i>
-            
             <div class="pix-code-box" id="pix-manual-code" onclick="copyManualPix()">
                 00020126430014br.gov.bcb.pix0121lukcoelhu@hotmail.com52040000530398654041.995802BR5912Lucas Coelho6009Sao Paulo62230519daqr4264446571991666304FB1C
             </div>
-            <p style="font-size: 9px; color: #777; margin-top: 5px;">Clique acima para copiar o Pix Copia e Cola</p>
+            <p style="font-size: 9px; color: #777; margin-top: 5px;">Toque no código para copiar</p>
         </div>
-
-        <button class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">
-            JÁ PAGUEI / LIBERAR CONTA
-        </button>
+        <button class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">JÁ PAGUEI / LIBERAR CONTA</button>
         <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
     </div>
 </div>
@@ -164,6 +159,7 @@
             currentUser = user;
             const userRef = doc(db, "usuarios", user.uid);
             const userSnap = await getDoc(userRef);
+            
             if (userSnap.exists() && userSnap.data().plan === "pro") {
                 isPro = true;
                 document.getElementById('limit-info').innerText = "PLANO PROFISSIONAL ⚡";
@@ -172,6 +168,7 @@
                 isPro = false;
                 document.getElementById('limit-info').innerText = "PLANO GRÁTIS (LIMITE 4)";
             }
+            
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('user-tag').innerText = user.email.split('@')[0].toUpperCase();
             initData();
@@ -180,59 +177,74 @@
         }
     });
 
-    window.logout = () => { if(confirm("Sair?")) signOut(auth); };
-
     document.getElementById('btn-login').onclick = async () => {
         const e = document.getElementById('auth-email').value;
         const p = document.getElementById('auth-pw').value;
-        try { await signInWithEmailAndPassword(auth, e, p); } 
-        catch { try { await createUserWithEmailAndPassword(auth, e, p); } catch { alert("Erro."); } }
+        const msg = document.getElementById('auth-msg');
+        if(!e || !p) return alert("Preencha tudo.");
+        
+        try { 
+            msg.innerText = "Tentando entrar...";
+            await signInWithEmailAndPassword(auth, e, p); 
+        } catch (err) { 
+            try { 
+                msg.innerText = "Criando nova conta...";
+                await createUserWithEmailAndPassword(auth, e, p); 
+            } catch (err2) { 
+                alert("Erro: Verifique e-mail/senha ou se a conta já existe."); 
+            }
+        }
     };
 
-    // --- FUNÇÕES DE PAGAMENTO ---
+    window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(() => location.reload()); };
+
+    // --- PAGAMENTO ---
     window.copyManualPix = () => {
         const code = document.getElementById('pix-manual-code').innerText.trim();
-        navigator.clipboard.writeText(code);
-        alert("Pix Copiado!");
+        navigator.clipboard.writeText(code).then(() => alert("Código Pix Copiado!"));
     };
 
     window.confirmarPagamento = async () => {
-        if(confirm("Confirma que enviou o PIX de R$ 29,90? Sua conta será ativada em instantes.")) {
-            // Aqui você pode enviar um e-mail pra você ou liberar automático para teste:
-            await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email });
-            alert("Sucesso! Recarregando...");
+        if(confirm("Você já pagou os R$ 29,90 via PIX?")) {
+            await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email }, { merge: true });
+            alert("Sua conta PRO foi ativada com sucesso!");
             location.reload();
         }
     };
 
-    // --- FUNÇÕES DA ENGRENAGEM (ADM) ---
+    // --- ADMIN ---
     window.showAdminAuth = () => {
         const savedPIN = localStorage.getItem('admin_pin');
         if (!savedPIN) {
-            const newPIN = prompt("PRIMEIRO ACESSO: Crie uma senha para este navegador:");
-            if (newPIN) { localStorage.setItem('admin_pin', newPIN); alert("Senha salva!"); }
+            const newPIN = prompt("Crie uma SENHA para a engrenagem (apenas este aparelho):");
+            if (newPIN) localStorage.setItem('admin_pin', newPIN);
         } else {
-            const inputPIN = prompt("Digite a senha da engrenagem:");
-            if (inputPIN === savedPIN) {
+            if (prompt("Senha da engrenagem:") === savedPIN) {
                 isAdmin = true;
                 document.getElementById('admin-panel').style.display = 'block';
                 window.scrollTo(0, document.body.scrollHeight);
-            } else { alert("Senha incorreta!"); }
+            } else { alert("Senha incorreta."); }
         }
     };
 
-    // --- LIMPEZA GERAL ---
     window.limparDadosGerais = async () => {
-        if (!confirm("Isso apagará todas as partidas e zerará os pontos de todos os jogadores. Confirmar?")) return;
+        if (!confirm("Isso apagará todas as partidas e zerará os pontos. Confirmar?")) return;
         const batch = writeBatch(db);
-        // Deletar partidas
         allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
-        // Zerar jogadores
-        globalPlayers.forEach(p => {
-            batch.update(doc(db, "jogadores", p.id), { pts: 0, v: 0, e: 0, d: 0, sg: 0 });
-        });
+        globalPlayers.forEach(p => batch.update(doc(db, "jogadores", p.id), { pts:0, v:0, e:0, d:0, sg:0 }));
         await batch.commit();
-        alert("Dados limpos!");
+        alert("Sistema zerado!");
+    };
+
+    window.editPlayer = async (id, nomeAntigo) => {
+        const novoNome = prompt("Novo nome para " + nomeAntigo + ":", nomeAntigo);
+        if(novoNome && novoNome !== nomeAntigo) {
+            await updateDoc(doc(db, "jogadores", id), { nome: novoNome });
+        }
+    };
+
+    window.deletePlayer = async (id) => {
+        if (confirm("Remover este jogador permanentemente?")) await deleteDoc(doc(db, "jogadores", id));
     };
 
     // --- CORE ---
@@ -250,14 +262,10 @@
     }
 
     window.addPlayer = async () => {
-        if (!isPro && globalPlayers.length >= 4) return openUpgradeModal();
+        if (!isPro && globalPlayers.length >= 4) return document.getElementById('upgrade-modal').style.display='flex';
         const n = document.getElementById("new-player-name").value;
         if (n) await addDoc(collection(db, "jogadores"), { nome: n, pts: 0, v: 0, e: 0, d: 0, sg: 0, owner: currentUser.uid });
         document.getElementById("new-player-name").value = "";
-    };
-
-    window.deletePlayer = async (id) => {
-        if (confirm("Remover este jogador?")) await deleteDoc(doc(db, "jogadores", id));
     };
 
     function renderTable() {
@@ -268,20 +276,14 @@
 
     function renderAdminPlayers() {
         document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #222; font-size:10px;">
-                <span>${p.nome}</span><i class="fas fa-trash" style="color:#ff0055;" onclick="deletePlayer('${p.id}')"></i>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #222;">
+                <span style="font-size:12px;">${p.nome}</span>
+                <div style="display:flex; gap:15px;">
+                    <i class="fas fa-edit" style="color:var(--gold);" onclick="editPlayer('${p.id}', '${p.nome}')"></i>
+                    <i class="fas fa-trash" style="color:#ff0055;" onclick="deletePlayer('${p.id}')"></i>
+                </div>
             </div>`).join('');
     }
-
-    window.compartilharRodada = (titulo, partidas) => {
-        let txt = `🏆 *EFOOTBALL LEAGUE - ${titulo}*\n\n`;
-        partidas.forEach(m => {
-            const res = m.status === 'done' ? `${m.g1} x ${m.g2}` : 'vs';
-            txt += `⚽ ${m.p1} ${res} ${m.p2}\n`;
-        });
-        if (navigator.share) { navigator.share({ title: 'Tabela', text: txt }); }
-        else { navigator.clipboard.writeText(txt); alert("Texto copiado!"); }
-    };
 
     function renderMatches() {
         const container = document.getElementById("results-by-round");
@@ -295,7 +297,7 @@
         Object.keys(groups).sort().forEach(k => {
             const div = document.createElement('div');
             div.className = 'rodada-group';
-            div.innerHTML = `<div class="rodada-label"><span>${k}</span> <i class="fas fa-share-alt" onclick='compartilharRodada("${k}", ${JSON.stringify(groups[k])})'></i></div>`;
+            div.innerHTML = `<div class="rodada-label"><span>${k}</span></div>`;
             groups[k].forEach(m => {
                 div.innerHTML += `
                     <div class="match-item">
@@ -341,6 +343,7 @@
         const batch = writeBatch(db);
         allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
         let p = [...globalPlayers];
+        if (p.length < 2) return alert("Adicione pelo menos 2 jogadores.");
         if (p.length % 2 !== 0) p.push({ nome: "FOLGA", id: "bye" });
         for (let r = 0; r < p.length - 1; r++) {
             for (let i = 0; i < p.length / 2; i++) {
@@ -353,6 +356,7 @@
             p.splice(1, 0, p.pop());
         }
         await batch.commit();
+        alert("Tabela gerada!");
     };
 
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
