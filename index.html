@@ -208,15 +208,15 @@
     };
 
     try {
-        const res = await fetch("https://api.mercadopago.com/v1/payments", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
-                "X-Idempotency-Key": "key_" + Date.now() // Necessário para evitar duplicidade
-            },
-            body: JSON.stringify(paymentData)
-        });
+        const res = await fetch("https://cors-anywhere.herokuapp.com/https://api.mercadopago.com/v1/payments", {
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json", 
+        "Authorization": `Bearer ${MP_ACCESS_TOKEN}`,
+        "X-Idempotency-Key": "key_" + Date.now()
+    },
+    body: JSON.stringify(paymentData)
+});
 
         const data = await res.json();
         console.log("Resposta do Mercado Pago:", data); // Verifique o erro real no F12 console
