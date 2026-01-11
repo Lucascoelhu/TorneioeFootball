@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de Cupons PRO</title>
+    <style>
+        body { background: #05070a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+        .card { background: #12161d; padding: 20px; border-radius: 15px; border: 1px solid #00ff88; display: inline-block; }
+        button { background: #00ff88; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        #lista-cupons { margin-top: 20px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>GERAR NOVA CHAVE PRO</h2>
+        <button onclick="gerarChave()">GERAR E SALVAR</button>
+        <div id="chave-gerada" style="margin-top: 20px; font-size: 20px; color: #00ff88; font-weight: bold;"></div>
+    </div>
+
+    <div id="lista-cupons">
+        <h3>Chaves Ativas no Banco:</h3>
+        <ul id="ul-cupons"></ul>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBeJNb65kjFuC-qvbmvnNpBYZNcCG7Zjwg",
+            authDomain: "efootball-pro-venda.firebaseapp.com",
+            projectId: "efootball-pro-venda",
+            storageBucket: "efootball-pro-venda.firebasestorage.app",
+            messagingSenderId: "718903184280",
+            appId: "1:718903184280:web:b028397ff37450fd7cb9ed"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.gerarChave = async () => {
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codigo = 'PRO-';
+            for (let i = 0; i < 8; i++) {
+                codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+
+            try {
+                // Salva o código como ID do documento para facilitar a busca
+                await setDoc(doc(db, "cupons", codigo), { criadoEm: new Date() });
+                document.getElementById('chave-gerada').innerText = codigo;
+                alert("Chave salva com sucesso!");
+            } catch (e) { alert("Erro ao salvar: " + e.message); }
+        };
+
+        // Lista chaves existentes
+        onSnapshot(collection(db, "cupons"), (snap) => {
+            const ul = document.getElementById('ul-cupons');
+            ul.innerHTML = "";
+            snap.forEach(doc => {
+                ul.innerHTML += `<li>${doc.id}</li>`;
+            });
+        });
+    </script>
+</body>
+</html>
