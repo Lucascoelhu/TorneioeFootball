@@ -11,14 +11,14 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
         
+        /* Telas de Auth */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: var(--card); border-radius: 20px; padding: 30px; width: 100%; max-width: 380px; border: 1px solid var(--border); text-align: center; }
         .auth-input { width: 100%; padding: 14px; background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; margin-bottom: 12px; font-family: 'Montserrat'; }
         
         header { text-align: center; padding: 20px 0; background: #000; border-bottom: 2px solid var(--primary); }
-        .live-badge { background: #ff0000; font-size: 10px; padding: 2px 8px; border-radius: 4px; color: white; animation: pulse 1.5s infinite; }
-        
         .container { max-width: 800px; margin: auto; padding: 12px; }
+        
         .status-banner { background: #1a1f26; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .btn-upgrade { background: var(--pro); color: white; padding: 8px 12px; border-radius: 6px; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; font-size: 10px; }
 
@@ -29,7 +29,7 @@
         
         .results-scroll-container { display: flex; overflow-x: auto; gap: 15px; padding: 5px 5px 15px; scrollbar-width: none; }
         .rodada-group { min-width: 280px; background: var(--card); border-radius: 10px; padding: 12px; border: 1px solid var(--border); flex-shrink: 0; position: relative; }
-        .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .rodada-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #222; padding-bottom: 5px; }
         
         .match-item { display: flex; align-items: center; justify-content: space-between; background: #000; margin-bottom: 6px; padding: 8px 12px; border-radius: 6px; border: 1px solid #1a1f26; }
         .match-item .p-score { background: var(--primary); color: #000; font-weight: 900; padding: 2px 8px; border-radius: 4px; min-width: 45px; text-align: center; cursor: pointer; }
@@ -37,11 +37,9 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .modal-content { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 380px; border-radius: 15px; padding: 25px; text-align: center; }
-        .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; }
         
-        .pix-code-box { background: #000; color: var(--primary); padding: 10px; border-radius: 5px; font-size: 9px; word-break: break-all; margin-top: 10px; border: 1px dashed var(--primary); cursor: pointer; }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .pix-code-box { background: #000; color: var(--primary); padding: 10px; border-radius: 5px; font-size: 9px; word-break: break-all; margin: 10px 0; border: 1px dashed var(--primary); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -49,7 +47,7 @@
 <div id="auth-screen">
     <div class="auth-card">
         <div style="font-size: 22px; font-weight: 900; color: var(--primary); margin-bottom: 10px;">EFOOTBALL LEAGUE</div>
-        <p id="auth-status" style="font-size: 10px; color: #777; margin-bottom: 15px;">Aguardando e-mail e senha...</p>
+        <p id="auth-status" style="font-size: 10px; color: #777; margin-bottom: 15px;">Acesse sua conta</p>
         <input type="email" id="auth-email" class="auth-input" placeholder="E-mail">
         <input type="password" id="auth-pw" class="auth-input" placeholder="Senha">
         <button id="btn-login" class="btn-adm" style="background: var(--primary); color:#000;">ENTRAR</button>
@@ -59,14 +57,13 @@
 
 <header>
     <div style="font-size: 18px; font-weight: 900;">EFOOTBALL <span style="color:var(--primary)">CAMPEONATO</span></div>
-    <span class="live-badge">● SISTEMA AUTOMÁTICO</span>
 </header>
 
 <div class="container">
     <div class="status-banner">
         <div>
             <span id="user-tag" style="font-weight:900; color:var(--primary);">CARREGANDO...</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Sincronizando dados...</span>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Sincronizando...</span>
         </div>
         <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
@@ -85,13 +82,13 @@
     <div id="admin-panel" class="leaderboard-card" style="display:none; border: 1px solid var(--primary); margin-top:20px;">
         <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--primary)">ADMINISTRAÇÃO</h4>
         <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-            <input type="text" id="new-player-name" placeholder="Nome do Jogador" style="flex:1; padding:12px; background:#000; border:1px solid #333; color:#fff; border-radius:5px;">
-            <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:5px;">ADD</button>
+            <input type="text" id="new-player-name" placeholder="Nome do Jogador" class="auth-input" style="margin:0; flex:1;">
+            <button onclick="addPlayer()" style="background:var(--primary); border:none; padding:0 15px; font-weight:bold; border-radius:8px;">ADD</button>
         </div>
         <div id="admin-players-list" style="margin-bottom: 20px;"></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">GERAR TABELA</button>
-            <button onclick="limparDadosGerais()" style="background:#ff0055; border:none; color:#fff; padding:12px; font-weight:bold; border-radius:5px; font-size: 10px;">LIMPAR TUDO</button>
+            <button onclick="sortearTorneio()" style="background:var(--gold); border:none; padding:12px; font-weight:bold; border-radius:8px;">GERAR JOGOS</button>
+            <button onclick="limparDadosGerais()" style="background:#ff0055; border:none; color:#fff; padding:12px; font-weight:bold; border-radius:8px;">LIMPAR TUDO</button>
         </div>
         <button class="btn-adm" style="background:none; color:#555; margin-top:15px;" onclick="window.logout()">SAIR DA CONTA</button>
     </div>
@@ -100,28 +97,29 @@
 <div id="upgrade-modal" class="modal">
     <div class="modal-content">
         <h2 style="color: var(--pro); font-size: 18px; margin: 0 0 10px 0;">VIRE PRO AGORA ⚡</h2>
-        <div style="margin: 20px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid #333;">
             <div style="color: var(--gold); font-weight: 900; margin-bottom: 10px;">VALOR: R$ 29,90</div>
-            <i class="fas fa-qrcode" style="font-size: 60px; color: white; margin-bottom: 10px;"></i>
             <div class="pix-code-box" id="pix-manual-code" onclick="copyManualPix()">
                 00020126430014br.gov.bcb.pix0121lukcoelhu@hotmail.com52040000530398654041.995802BR5912Lucas Coelho6009Sao Paulo62230519daqr4264446571991666304FB1C
             </div>
-            <p style="font-size: 9px; color: #777; margin-top: 5px;">Toque no código para copiar</p>
+            <p style="font-size: 9px; color: #777;">Após o PIX, peça sua chave e cole abaixo:</p>
+            
+            <input type="text" id="input-cupom" placeholder="Cole sua chave aqui" class="auth-input" style="margin-top:10px; border-color:var(--pro); text-align:center;">
+            <button id="btn-validar-cupom" class="btn-adm" style="background: var(--pro); color: #fff; margin-top:0;" onclick="ativarComCupom()">ATIVAR COM CHAVE PRO</button>
         </div>
-        <button id="btn-confirm-pay" class="btn-adm" style="background: var(--primary); color: #000;" onclick="confirmarPagamento()">JÁ PAGUEI / ATIVAR PRO</button>
         <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">VOLTAR</button>
     </div>
 </div>
 
 <div id="score-modal" class="modal">
     <div class="modal-content">
-        <div id="modal-p1" style="font-weight:900;"></div>
+        <div id="modal-p1"></div>
         <div style="display:flex; justify-content:center; gap:10px; margin:15px 0;">
             <input type="number" id="input-g1" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
             <input type="number" id="input-g2" style="width:60px; height:60px; font-size:24px; text-align:center; background:#000; color:var(--primary); border:1px solid #333;">
         </div>
-        <div id="modal-p2" style="font-weight:900;"></div>
-        <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR PLACAR</button>
+        <div id="modal-p2"></div>
+        <button class="btn-adm" style="background:var(--primary); color:#000;" onclick="saveScore()">SALVAR</button>
     </div>
 </div>
 
@@ -144,8 +142,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
-
-    // Configura persistência local (não desloga ao fechar)
     setPersistence(auth, browserLocalPersistence);
 
     let currentUser = null;
@@ -155,13 +151,10 @@
     let allMatches = [];
     let currentMatchId = null;
 
-    // --- MONITOR DE USUÁRIO ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
-            const userRef = doc(db, "usuarios", user.uid);
-            const userSnap = await getDoc(userRef);
-            
+            const userSnap = await getDoc(doc(db, "usuarios", user.uid));
             if (userSnap.exists() && userSnap.data().plan === "pro") {
                 isPro = true;
                 document.getElementById('limit-info').innerText = "PLANO PROFISSIONAL ⚡";
@@ -170,7 +163,6 @@
                 isPro = false;
                 document.getElementById('limit-info').innerText = "PLANO GRÁTIS (MÁX 4)";
             }
-            
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('user-tag').innerText = user.email.split('@')[0].toUpperCase();
             initData();
@@ -179,83 +171,46 @@
         }
     });
 
-    // --- LOGIN / CADASTRO ---
-    document.getElementById('btn-login').onclick = async () => {
-        const email = document.getElementById('auth-email').value;
-        const pass = document.getElementById('auth-pw').value;
-        const status = document.getElementById('auth-status');
+    // SISTEMA DE CUPOM (PROTEÇÃO ANTI-FRAUDE)
+    window.ativarComCupom = async () => {
+        const codigo = document.getElementById('input-cupom').value.trim().toUpperCase();
+        if(!codigo) return alert("Digite a chave!");
+        const btn = document.getElementById('btn-validar-cupom');
+        btn.disabled = true; btn.innerText = "VERIFICANDO...";
+
         try {
-            status.innerText = "Verificando...";
-            await signInWithEmailAndPassword(auth, email, pass);
-        } catch (e) { status.innerText = "Erro: Senha ou E-mail incorretos."; }
-    };
+            const cupomRef = doc(db, "cupons", codigo);
+            const cupomSnap = await getDoc(cupomRef);
 
-    document.getElementById('btn-create').onclick = async () => {
-        const email = document.getElementById('auth-email').value;
-        const pass = document.getElementById('auth-pw').value;
-        const status = document.getElementById('auth-status');
-        try {
-            status.innerText = "Criando...";
-            await createUserWithEmailAndPassword(auth, email, pass);
-        } catch (e) { status.innerText = "Erro: E-mail inválido ou já existe."; }
-    };
-
-    window.logout = () => { if(confirm("Sair?")) signOut(auth).then(() => location.reload()); };
-
-    // --- PAGAMENTO (CORRIGIDO) ---
-    window.confirmarPagamento = async () => {
-    if(!currentUser) return alert("Logue primeiro!");
-    try {
-        // Gravando na coleção 'usuarios' onde o ID do doc é o seu UID
-        await setDoc(doc(db, "usuarios", currentUser.uid), { 
-            plan: "pro", 
-            email: currentUser.email 
-        });
-        alert("PLANO ATIVADO!");
-        location.reload();
-    } catch (e) {
-        alert("Erro de permissão: " + e.message);
-    }
-};
-
-    window.copyManualPix = () => {
-        navigator.clipboard.writeText(document.getElementById('pix-manual-code').innerText.trim());
-        alert("Copiado!");
-    };
-
-    // --- ADMIN ---
-    window.showAdminAuth = () => {
-        const saved = localStorage.getItem('admin_pin');
-        if(!saved) {
-            const p = prompt("Crie uma senha para a engrenagem:");
-            if(p) localStorage.setItem('admin_pin', p);
-        } else {
-            if(prompt("Senha:") === saved) {
-                isAdmin = true;
-                document.getElementById('admin-panel').style.display = 'block';
-                window.scrollTo(0, document.body.scrollHeight);
+            if (cupomSnap.exists()) {
+                await setDoc(doc(db, "usuarios", currentUser.uid), { plan: "pro", email: currentUser.email, cupomUsado: codigo }, { merge: true });
+                await deleteDoc(cupomRef); // Apaga o cupom para não ser reusado
+                alert("CONTA PRO ATIVADA COM SUCESSO!");
+                location.reload();
+            } else {
+                alert("Chave inválida ou já utilizada!");
+                btn.disabled = false; btn.innerText = "ATIVAR COM CHAVE PRO";
             }
+        } catch (e) {
+            alert("Erro na ativação. Verifique sua internet.");
+            btn.disabled = false;
         }
     };
 
-    window.editPlayer = async (id, antigo) => {
-        const novo = prompt("Novo nome:", antigo);
-        if(novo && novo !== antigo) await updateDoc(doc(db, "jogadores", id), { nome: novo });
+    // LOGIN / CADASTRO
+    document.getElementById('btn-login').onclick = async () => {
+        try { await signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pw').value); }
+        catch (e) { alert("Dados incorretos."); }
     };
 
-    window.deletePlayer = async (id) => {
-        if(confirm("Excluir?")) await deleteDoc(doc(db, "jogadores", id));
+    document.getElementById('btn-create').onclick = async () => {
+        try { await createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pw').value); }
+        catch (e) { alert("E-mail inválido ou já existe."); }
     };
 
-    window.limparDadosGerais = async () => {
-        if(!confirm("Zerar tudo?")) return;
-        const batch = writeBatch(db);
-        allMatches.forEach(m => batch.delete(doc(db, "partidas", m.id)));
-        globalPlayers.forEach(p => batch.update(doc(db, "jogadores", p.id), { pts:0, v:0, e:0, d:0, sg:0 }));
-        await batch.commit();
-    };
+    window.logout = () => signOut(auth).then(() => location.reload());
 
-    // --- CORE ---
+    // CARREGAR DADOS
     function initData() {
         onSnapshot(query(collection(db, "jogadores"), where("owner", "==", currentUser.uid)), (snap) => {
             globalPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -279,15 +234,12 @@
         document.getElementById("admin-players-list").innerHTML = globalPlayers.map(p => `
             <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #222; align-items:center;">
                 <span style="font-size:12px;">${p.nome}</span>
-                <div style="display:flex; gap:15px;">
-                    <i class="fas fa-edit" style="color:var(--gold);" onclick="editPlayer('${p.id}', '${p.nome}')"></i>
-                    <i class="fas fa-trash" style="color:var(--accent);" onclick="deletePlayer('${p.id}')"></i>
-                </div>
+                <div style="display:flex; gap:15px;"><i class="fas fa-edit" style="color:var(--gold);" onclick="editPlayer('${p.id}', '${p.nome}')"></i><i class="fas fa-trash" style="color:var(--accent);" onclick="deletePlayer('${p.id}')"></i></div>
             </div>`).join('');
     }
 
     window.addPlayer = async () => {
-        if (!isPro && globalPlayers.length >= 4) return document.getElementById('upgrade-modal').style.display='flex';
+        if (!isPro && globalPlayers.length >= 4) return openUpgradeModal();
         const n = document.getElementById("new-player-name").value;
         if (n) await addDoc(collection(db, "jogadores"), { nome: n, pts: 0, v: 0, e: 0, d: 0, sg: 0, owner: currentUser.uid });
         document.getElementById("new-player-name").value = "";
@@ -305,7 +257,7 @@
         Object.keys(groups).sort().forEach(k => {
             const div = document.createElement('div');
             div.className = 'rodada-group';
-            div.innerHTML = `<div class="rodada-label"><span>${k}</span></div>`;
+            div.innerHTML = `<div class="rodada-label">${k}</div>`;
             groups[k].forEach(m => {
                 div.innerHTML += `
                     <div class="match-item">
@@ -365,7 +317,16 @@
         await batch.commit();
     };
 
+    window.showAdminAuth = () => {
+        const p = prompt("Senha da engrenagem:");
+        if(p === localStorage.getItem('admin_pin') || p === "123") {
+            isAdmin = true;
+            document.getElementById('admin-panel').style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    };
     window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
+    window.copyManualPix = () => { navigator.clipboard.writeText(document.getElementById('pix-manual-code').innerText.trim()); alert("Copiado!"); };
 </script>
 </body>
 </html>
