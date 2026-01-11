@@ -22,7 +22,7 @@
         .container { max-width: 800px; margin: auto; padding: 12px; }
 
         .status-banner { background: #1a1f26; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-        .btn-upgrade { background: var(--pro); color: white; padding: 6px 12px; border-radius: 6px; font-weight: 900; text-decoration: none; font-size: 10px; text-transform: uppercase; }
+        .btn-upgrade { background: var(--pro); color: white; padding: 6px 12px; border-radius: 6px; font-weight: 900; text-decoration: none; font-size: 10px; text-transform: uppercase; border: none; cursor: pointer; }
 
         .leaderboard-card { background: var(--card); border-radius: 12px; padding: 10px; margin-bottom: 20px; border: 1px solid var(--border); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 380px; }
@@ -45,11 +45,14 @@
         .player-content { display: none; padding: 10px; border: 1px solid #1a1f26; border-top: none; background: rgba(0,0,0,0.3); margin-bottom: 15px; border-radius: 0 0 8px 8px; }
         .turno-header { background: #1e242d; color: var(--gold); padding: 8px 12px; font-size: 11px; font-weight: 900; margin: 15px 0 10px; border-radius: 4px; border-left: 3px solid var(--gold); }
         
+        /* MODAIS */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
         .modal-content { background: var(--card); border: 1px solid var(--primary); width: 100%; max-width: 350px; border-radius: 15px; padding: 25px; text-align: center; }
+        .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        
         .score-input-wrap { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 20px 0; }
         .score-input-wrap input { width: 65px; height: 65px; background: #000; border: 2px solid #333; color: var(--primary); font-size: 30px; font-weight: 900; text-align: center; border-radius: 10px; }
-        .btn-adm { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 11px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        
         .btn-config { position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.05); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; opacity: 0.1; z-index: 999; }
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -76,9 +79,9 @@
     <div id="account-status" class="status-banner">
         <div>
             <span id="user-tag" style="font-weight:900; color:var(--primary);">USUÁRIO</span><br>
-            <span id="limit-info" style="font-size:9px; opacity:0.6;">Verificando plano...</span>
+            <span id="limit-info" style="font-size:9px; opacity:0.6;">Carregando...</span>
         </div>
-        <a href="https://wa.me/SEUNUMERO" id="btn-upgrade-link" target="_blank" class="btn-upgrade">VIRAR PRO ⚡</a>
+        <button onclick="openUpgradeModal()" id="btn-upgrade-top" class="btn-upgrade">VIRAR PRO ⚡</button>
     </div>
 
     <div class="leaderboard-card">
@@ -90,7 +93,7 @@
         </table>
     </div>
 
-    <div class="section-title"><i class="fas fa-running"></i> Rodadas em Andamento</div>
+    <div class="section-title"><i class="fas fa-running"></i> Rodadas e Jogos</div>
     <div id="results-by-round" class="results-scroll-container"></div>
 
     <button class="btn-adm" style="background: var(--card); color: var(--primary); border: 1px solid var(--border); font-size: 13px; padding:15px;" onclick="toggleConfrontos()">
@@ -138,8 +141,34 @@
     </div>
 </div>
 
-<button class="btn-config" onclick="showAuth()"><i class="fas fa-cog"></i></button>
+<div id="upgrade-modal" class="modal">
+    <div class="modal-content" style="text-align: left; max-width: 380px;">
+        <h2 style="color: var(--pro); font-size: 18px; margin-top: 0;">PLANO PROFISSIONAL ⚡</h2>
+        <p style="font-size: 11px; color: #777; margin-bottom: 15px;">Libere todo o potencial do seu campeonato:</p>
+        
+        <div style="font-size: 12px; line-height: 1.8; margin-bottom: 20px;">
+            <div>✅ <b>Jogadores Ilimitados</b> (Atualmente limite de 4)</div>
+            <div>✅ <b>Turno de Volta</b> (Tabelas de ida e volta)</div>
+            <div>✅ <b>Estatísticas de Gols</b> (Saldo e Gols Pró)</div>
+            <div>✅ <b>Suporte Prioritário</b> via WhatsApp</div>
+        </div>
 
+        <div style="background: #000; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--pro);">
+            <p style="font-size: 10px; margin-bottom: 10px;">Pague uma vez e use para sempre:</p>
+            <div style="background: white; padding: 10px; display: inline-block; border-radius: 5px;">
+                <i class="fas fa-qrcode" style="font-size: 100px; color: #000;"></i>
+            </div>
+            <p style="font-size: 14px; font-weight: 900; color: var(--primary); margin-top: 10px;">R$ 29,90</p>
+        </div>
+
+        <button class="btn-adm" style="background: #25D366; color: white;" onclick="confirmarPagamento()">
+            <i class="fab fa-whatsapp"></i> JÁ PAGUEI, ATIVE MINHA CONTA
+        </button>
+        <button class="btn-adm" style="background: none; color: #666;" onclick="document.getElementById('upgrade-modal').style.display='none'">MAIS TARDE</button>
+    </div>
+</div>
+
+<button class="btn-config" onclick="showAuth()"><i class="fas fa-cog"></i></button>
 <div id="admin-auth" class="modal">
     <div style="text-align:center;">
         <p style="font-weight:900; color:var(--primary);">PIN ADMIN</p>
@@ -174,7 +203,6 @@
     let allMatches = [];
     let currentMatchId = null;
 
-    // --- AUTENTICAÇÃO E PLANO ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             currentUser = user;
@@ -185,7 +213,7 @@
                 isPro = true;
                 document.getElementById('limit-info').innerText = "PLANO: PROFISSIONAL ⚡";
                 document.getElementById('limit-info').style.color = "var(--primary)";
-                document.getElementById('btn-upgrade-link').style.display = 'none';
+                document.getElementById('btn-upgrade-top').style.display = 'none';
             } else {
                 isPro = false;
                 document.getElementById('limit-info').innerText = "PLANO: GRÁTIS (LIMITE 4)";
@@ -208,47 +236,96 @@
     };
 
     window.logout = () => signOut(auth);
+    window.openUpgradeModal = () => document.getElementById('upgrade-modal').style.display = 'flex';
+    window.confirmarPagamento = () => {
+        const msg = `Olá! Acabei de realizar o pagamento do Plano PRO para o e-mail: ${currentUser.email}. Aguardo a ativação!`;
+        window.open(`https://api.whatsapp.com/send?phone=5511999999999&text=${encodeURIComponent(msg)}`);
+    };
 
-    // --- CARREGAMENTO DE DADOS (ISOLADO POR OWNER) ---
     function initData() {
         const urlParams = new URLSearchParams(window.location.search);
         const ownerId = urlParams.get('league') || (currentUser ? currentUser.uid : null);
         if(!ownerId) return;
 
-        const qP = query(collection(db, "jogadores"), where("owner", "==", ownerId));
-        onSnapshot(qP, (snap) => {
+        onSnapshot(query(collection(db, "jogadores"), where("owner", "==", ownerId)), (snap) => {
             globalPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            globalPlayers.sort((a,b) => b.pts - a.pts || b.sg - a.sg || (b.gp || 0) - (a.gp || 0));
+            globalPlayers.sort((a,b) => b.pts - a.pts || b.sg - a.sg);
             renderLeaderboard();
             updateAdminList();
         });
 
-        const qM = query(collection(db, "partidas"), where("owner", "==", ownerId));
-        onSnapshot(qM, (snap) => {
+        onSnapshot(query(collection(db, "partidas"), where("owner", "==", ownerId)), (snap) => {
             allMatches = snap.docs.map(d => ({id: d.id, ...d.data()}));
             renderResultsByRound();
             if(document.getElementById('confrontos-content').style.display === 'block') renderMatchesByPlayer();
         });
     }
 
-    // --- ADMIN E REGRAS ---
+    // --- RENDER COM TRAVA PRO ---
+    function renderResultsByRound() {
+        const container = document.getElementById("results-by-round");
+        if(allMatches.length === 0) return container.innerHTML = "";
+        
+        const groups = {};
+        allMatches.forEach(m => {
+            const label = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
+            if(!groups[label]) groups[label] = { turno: m.turno, games: [], hasStarted: false };
+            groups[label].games.push(m);
+            if(m.status === 'done') groups[label].hasStarted = true;
+        });
+
+        const sorted = Object.keys(groups).sort((a,b) => groups[a].turno - groups[b].turno || a.localeCompare(b));
+        
+        container.innerHTML = sorted.map(label => {
+            const group = groups[label];
+            
+            // TRAVA DE VOLTA (PRO)
+            if (group.turno === 2 && !isPro) {
+                return `
+                <div class="rodada-group" style="border: 1px dashed var(--pro); opacity: 0.8;">
+                    <div class="rodada-label" style="color:var(--pro)">TURNO DE VOLTA BLOQUEADO</div>
+                    <div style="text-align:center; padding: 15px 0;">
+                        <i class="fas fa-lock" style="color:var(--pro); margin-bottom:10px;"></i><br>
+                        <button class="btn-upgrade" onclick="openUpgradeModal()">LIBERAR PRO</button>
+                    </div>
+                </div>`;
+            }
+
+            if (group.hasStarted || isAdmin) {
+                return `
+                <div class="rodada-group">
+                    <div class="rodada-label">${label}</div>
+                    ${group.games.map(m => `
+                        <div class="match-item">
+                            <span class="p-name" style="text-align:right">${m.p1}</span>
+                            <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScoreModal('${m.id}')` : ''}">
+                                ${m.status === 'done' ? `${m.g1} - ${m.g2}` : 'VS'}
+                            </span>
+                            <span class="p-name" style="text-align:left">${m.p2}</span>
+                        </div>`).join('')}
+                </div>`;
+            }
+            return "";
+        }).join('');
+    }
+
+    // --- RESTANTE DAS FUNÇÕES (IGUAIS) ---
     window.showAuth = () => document.getElementById('admin-auth').style.display = 'flex';
     window.checkAuth = () => {
         if(document.getElementById('admin-pass').value === "9498") {
-            isAdmin = true;
-            document.getElementById('admin-panel').style.display = 'block';
+            isAdmin = true; document.getElementById('admin-panel').style.display = 'block';
             document.getElementById('admin-auth').style.display = 'none';
-        } else alert("Erro PIN");
+            renderResultsByRound();
+        } else alert("PIN Errado");
     };
 
     window.addPlayer = async () => {
-        if(!isPro && globalPlayers.length >= 4) return alert("Limite 4 jogadores atingido. Vire PRO!");
+        if(!isPro && globalPlayers.length >= 4) return openUpgradeModal();
         const n = document.getElementById("new-player-name").value;
         if(n) await addDoc(collection(db, "jogadores"), { nome: n, pts:0, v:0, e:0, d:0, sg:0, gp:0, owner: currentUser.uid });
         document.getElementById("new-player-name").value = "";
     };
 
-    // --- RENDERIZAÇÃO ---
     function renderLeaderboard() {
         document.querySelector("#leaderboard tbody").innerHTML = globalPlayers.map((p, i) => `
             <tr>
@@ -257,31 +334,6 @@
                 <td style="color:var(--primary); font-weight:900;">${p.pts}</td>
                 <td>${p.v}</td><td>${p.e}</td><td>${p.d}</td><td>${p.sg}</td><td>${p.gp || 0}</td>
             </tr>`).join('');
-    }
-
-    function renderResultsByRound() {
-        const container = document.getElementById("results-by-round");
-        if(allMatches.length === 0) return container.innerHTML = "";
-        const groups = {};
-        allMatches.forEach(m => {
-            const label = `RODADA ${m.rodada} (${m.turno === 1 ? 'IDA' : 'VOLTA'})`;
-            if(!groups[label]) groups[label] = { turno: m.turno, rodada: m.rodada, games: [], hasStarted: false };
-            groups[label].games.push(m);
-            if(m.status === 'done') groups[label].hasStarted = true;
-        });
-        const sorted = Object.keys(groups).sort((a,b) => groups[a].turno - groups[b].turno || groups[a].rodada - groups[b].rodada);
-        container.innerHTML = sorted.filter(l => groups[l].hasStarted || isAdmin).map(label => `
-            <div class="rodada-group">
-                <div class="rodada-label">${label}</div>
-                ${groups[label].games.map(m => `
-                    <div class="match-item">
-                        <span class="p-name" style="text-align:right">${m.p1}</span>
-                        <span class="p-score ${m.status !== 'done' ? 'open' : ''}" onclick="${isAdmin ? `openScoreModal('${m.id}')` : ''}">
-                            ${m.status === 'done' ? `${m.g1} - ${m.g2}` : 'VS'}
-                        </span>
-                        <span class="p-name" style="text-align:left">${m.p2}</span>
-                    </div>`).join('')}
-            </div>`).join('');
     }
 
     window.toggleConfrontos = () => {
@@ -307,12 +359,12 @@
             return `<button class="player-header" onclick="this.nextElementSibling.style.display = (this.nextElementSibling.style.display==='none'?'block':'none')">${player.nome.toUpperCase()} <i class="fas fa-chevron-down"></i></button>
                     <div class="player-content" style="display:none">
                         <div class="turno-header">PRIMEIRO TURNO</div>${pM.filter(m=>m.turno===1).map(renderM).join('')}
-                        <div class="turno-header">SEGUNDO TURNO</div>${pM.filter(m=>m.turno===2).map(renderM).join('')}
+                        <div class="turno-header">SEGUNDO TURNO</div>
+                        ${!isPro ? '<p style="font-size:10px; color:var(--pro); text-align:center;">🔒 Disponível no Plano PRO</p>' : pM.filter(m=>m.turno===2).map(renderM).join('')}
                     </div>`;
         }).join('');
     };
 
-    // --- PLACAR ---
     window.openScoreModal = (id) => {
         const m = allMatches.find(x => x.id === id);
         currentMatchId = id;
@@ -347,7 +399,6 @@
         await batch.commit();
     }
 
-    // --- SORTEIO E RESET ---
     window.sortearTorneio = async () => {
         if(!confirm("Gerar nova tabela?")) return;
         const batch = writeBatch(db);
